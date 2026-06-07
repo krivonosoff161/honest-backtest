@@ -1,0 +1,23 @@
+# python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+
+# tooling
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# runtime artifacts produced by examples
+forward_log.jsonl
+
+# secrets / editors / os
+.env
+.vscode/
+.idea/
+.DS_Store
