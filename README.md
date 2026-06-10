@@ -32,8 +32,8 @@ This kit **reduces** self-deception. It does **not** eliminate it.
 | 2 | **Validation splits** | judging on data you fitted to | `splits` — holdout · walk-forward · purged k-fold | [02](examples/02_insample_collapse.py) |
 | 3 | **Significance** | luck dressed as edge | `significance` — bootstrap CI · permutation · Bonferroni/BH | [04](examples/04_multiple_testing.py) |
 | 4 | **Costs** | an edge thinner than fees + slippage | `costs` — gross vs net | [03](examples/03_cost_kills_edge.py) |
-| 5 | **Robustness** | a lucky spike vs a real plateau | `robustness` — param sweep · sub-period stability | — |
-| 6 | **Forward** | everything above is just "not broken yet" | `forward.ForwardLog` | — |
+| 5 | **Robustness** | a lucky spike vs a real plateau | `robustness` — param sweep · sub-period stability | [06](examples/06_robustness_plateau.py) |
+| 6 | **Forward** | everything above is just "not broken yet" | `forward.ForwardLog` | [07](examples/07_forward_log.py) |
 | 7 | **AI adversarial review** | a single pass rationalizes | `adversarial_review` | [05](examples/05_adversarial_review.py) |
 
 Each layer is a small, independent function — use one, or stack them.
@@ -58,8 +58,14 @@ python examples/02_insample_collapse.py   # best-in-sample collapses out-of-samp
 python examples/03_cost_kills_edge.py      # a real edge, eaten by costs
 python examples/04_multiple_testing.py     # 40 noise strategies, ~2 "win" by luck
 python examples/05_adversarial_review.py   # an AI panel refutes a fake finding
+python examples/06_robustness_plateau.py    # lucky spike vs parameter plateau
+python examples/07_forward_log.py           # append-only forward log = the only evidence
 python -m pytest -q                        # the toolkit's own tests
 ```
+
+> Statistical note: the significance layer (bootstrap, sign-flip permutation) treats
+> observations as **i.i.d.** Real returns are autocorrelated, so those p-values/CIs are
+> optimistic on real data — good enough to kill bad ideas cheaply, not to certify good ones.
 
 ---
 

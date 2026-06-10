@@ -4,6 +4,12 @@
 bootstrap_ci  : confidence interval for a statistic via resampling.
 permutation_test : null = the signal has no directional edge (random signs).
 bonferroni / benjamini_hochberg : if you tested N things, correct for it.
+
+Assumption: both bootstrap and the sign-flip permutation treat observations as
+i.i.d. Real trading returns are autocorrelated and volatility-clustered, which
+makes these p-values/CIs OPTIMISTIC on real data. Fine for teaching and for a
+first cheap kill-test; for serious work use block bootstrap / stationary
+bootstrap or account for dependence explicitly.
 """
 from __future__ import annotations
 
