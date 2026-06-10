@@ -67,6 +67,16 @@ python -m pytest -q                        # the toolkit's own tests
 > observations as **i.i.d.** Real returns are autocorrelated, so those p-values/CIs are
 > optimistic on real data — good enough to kill bad ideas cheaply, not to certify good ones.
 
+Reading order and what each example does (and does **not**) prove: [examples/README.md](examples/README.md).
+
+---
+
+## Docs
+
+- [Architecture](docs/architecture.md) — the seven layers and the meta-caveat.
+- [Project map](docs/project-map.md) — modules, what exists vs not included, reviewer checklist.
+- [Use cases](docs/use-cases.md) — workflows, what this is *not*, residual risk.
+
 ---
 
 ## The AI layer (layer 7)
