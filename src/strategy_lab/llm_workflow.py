@@ -147,8 +147,8 @@ def build_inventory_digest(inventory_latest: Path) -> str:
             {
                 "dataset": item.get("dataset"),
                 "exists": item.get("exists"),
-                "files": item.get("files"),
-                "bytes": item.get("bytes"),
+                "files": item.get("file_count", item.get("files")),
+                "bytes": item.get("byte_count", item.get("bytes")),
             }
         )
     digest = {

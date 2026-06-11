@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Optional
 
 from .inventory import run_inventory
+from .llm import alibaba_environment_report
 from .llm_workflow import estimate_llm_plan, run_llm_plan
 from .models import ExperimentQueueConfig, InventoryConfig, LLMConfig, RegistryConfig
 from .registry import append_registry_entry, initialize_registry, queue_experiment_plan
@@ -39,6 +40,11 @@ def main(argv: Optional[list[str]] = None) -> int:
 
     estimate = subparsers.add_parser("llm-estimate", help="Estimate a guarded LLM planning request without network.")
     _add_llm_args(estimate, live_args=False)
+
+    doctor = subparsers.add_parser("llm-doctor", help="Inspect local LLM provider setup without a network call.")
+    doctor.add_argument("--provider", default="alibaba", choices=["alibaba"], help="Provider to inspect.")
+    doctor.add_argument("--base-url", default="", help="Optional provider base URL override.")
+    doctor.add_argument("--api-key-env", default="DASHSCOPE_API_KEY", help="Environment variable containing API key.")
 
     plan = subparsers.add_parser("llm-plan", help="Create a guarded LLM research proposal.")
     _add_llm_args(plan, live_args=True)
@@ -91,6 +97,19 @@ def main(argv: Optional[list[str]] = None) -> int:
         print(f"experiment queued: {result.experiment_id}")
         print(f"plan: {result.queue_path}")
         print(f"index: {result.index_path}")
+        return 0
+    if args.command == "llm-doctor":
+        result = alibaba_environment_report(base_url=args.base_url, api_key_env=args.api_key_env)
+        print(f"provider: {result['provider']}")
+        print(f"api key env: {result['api_key_env']}")
+        print(f"api key present: {result['api_key_present']}")
+        if result["api_key_preview"]:
+            print(f"api key preview: {result['api_key_preview']}")
+        print(f"live switch enabled: {result['live_switch_enabled']}")
+        print(f"region: {result['region']}")
+        print(f"base url: {result['base_url']}")
+        print(f"chat completions url: {result['chat_completions_url']}")
+        print(f"known regions: {', '.join(result['known_regions'])}")
         return 0
     if args.command == "llm-estimate":
         estimate_result = estimate_llm_plan(

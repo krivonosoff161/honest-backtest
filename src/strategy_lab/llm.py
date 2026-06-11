@@ -18,6 +18,12 @@ from .models import LLMConfig, LLMMessage, LLMRequest, LLMResponse
 
 
 DEFAULT_ALIBABA_BASE_URL = "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
+ALIBABA_BASE_URLS = {
+    "singapore": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "us": "https://dashscope-us.aliyuncs.com/compatible-mode/v1",
+    "beijing": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    "hong_kong": "https://cn-hongkong.dashscope.aliyuncs.com/compatible-mode/v1",
+}
 
 
 @dataclass(frozen=True)
@@ -190,7 +196,7 @@ class AlibabaQwenProvider:
         api_key = os.getenv(config.api_key_env, "")
         if not api_key:
             raise ValueError(f"missing API key env var: {config.api_key_env}")
-        base_url = (config.base_url or os.getenv("DASHSCOPE_BASE_URL") or DEFAULT_ALIBABA_BASE_URL).rstrip("/")
+        base_url = resolve_alibaba_base_url(config.base_url).rstrip("/")
         url = f"{base_url}/chat/completions"
         payload = {
             "model": request.model,
@@ -243,6 +249,38 @@ def provider_for_name(name: str) -> LLMProvider:
     raise ValueError(f"unsupported LLM provider: {name}")
 
 
+def resolve_alibaba_base_url(base_url: str = "") -> str:
+    """Resolve the OpenAI-compatible Model Studio base URL.
+
+    Region-specific API keys are not interchangeable, so callers can override
+    the base URL directly or set DASHSCOPE_REGION to a known region name.
+    """
+    explicit = base_url or os.getenv("DASHSCOPE_BASE_URL", "")
+    if explicit:
+        return explicit.rstrip("/")
+    region = os.getenv("DASHSCOPE_REGION", "").strip().lower().replace("-", "_")
+    return ALIBABA_BASE_URLS.get(region, DEFAULT_ALIBABA_BASE_URL)
+
+
+def alibaba_environment_report(base_url: str = "", api_key_env: str = "DASHSCOPE_API_KEY") -> dict[str, Any]:
+    resolved_base_url = resolve_alibaba_base_url(base_url)
+    region = os.getenv("DASHSCOPE_REGION", "").strip() or "default_singapore"
+    key = os.getenv(api_key_env, "")
+    enabled = os.getenv("STRATEGY_LAB_LLM_ENABLED", "").lower() == "true"
+    return {
+        "schema_version": 1,
+        "provider": "alibaba",
+        "api_key_env": api_key_env,
+        "api_key_present": bool(key),
+        "api_key_preview": _secret_preview(key),
+        "live_switch_enabled": enabled,
+        "region": region,
+        "base_url": resolved_base_url,
+        "known_regions": sorted(ALIBABA_BASE_URLS),
+        "chat_completions_url": f"{resolved_base_url.rstrip('/')}/chat/completions",
+    }
+
+
 def _extract_chat_text(raw: dict[str, Any]) -> str:
     choices = raw.get("choices")
     if not isinstance(choices, list) or not choices:
@@ -265,3 +303,11 @@ def _looks_like_max_model(model: str) -> bool:
 
 def _env_model_name(model: str) -> str:
     return "".join(ch if ch.isalnum() else "_" for ch in model.upper())
+
+
+def _secret_preview(secret: str) -> str:
+    if not secret:
+        return ""
+    if len(secret) <= 8:
+        return "***"
+    return f"{secret[:4]}...{secret[-4:]}"

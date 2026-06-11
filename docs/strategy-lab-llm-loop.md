@@ -92,6 +92,49 @@ LLMProvider
 This allows local or cloud providers to be swapped later without changing the
 research engine.
 
+## Alibaba Model Studio setup
+
+The experimental Alibaba provider uses Model Studio's OpenAI-compatible chat
+endpoint. Local setup is intentionally explicit:
+
+```text
+DASHSCOPE_API_KEY=<region-specific-api-key>
+STRATEGY_LAB_LLM_ENABLED=true
+DASHSCOPE_REGION=singapore|us|beijing|hong_kong
+```
+
+Alternatively, set `DASHSCOPE_BASE_URL` or pass `--base-url` directly when a
+workspace uses a custom endpoint. API keys and base URLs are region-specific;
+do not mix a Beijing key with a Singapore or US endpoint.
+
+Inspect local configuration without sending a request:
+
+```bash
+python -m strategy_lab.cli llm-doctor
+```
+
+Run a dry budget estimate before any live call:
+
+```bash
+python -m strategy_lab.cli llm-estimate \
+  --inventory-latest <private-research-output>/manifests/inventory_latest.json \
+  --out-dir <private-research-output> \
+  --provider alibaba \
+  --model qwen3.5-flash
+```
+
+Live calls require all guard switches:
+
+```bash
+python -m strategy_lab.cli llm-plan \
+  --inventory-latest <private-research-output>/manifests/inventory_latest.json \
+  --out-dir <private-research-output> \
+  --provider alibaba \
+  --model qwen3.5-flash \
+  --live \
+  --i-accept-cost
+```
+
 Training or fine-tuning a custom model should wait until the registry contains
 enough high-quality experiment/outcome pairs. Before that, retrieval over the
 registry and Obsidian notes is cheaper and safer.

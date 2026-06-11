@@ -132,6 +132,13 @@ Queued plans require explicit budgets and cannot enable LLM calls inside the
 deterministic runner. Registry entries are research records only; statuses such
 as `approved`, `profitable`, `ready`, or `live` are rejected.
 
+Alibaba Model Studio / DashScope live calls are opt-in. Check local setup
+without a network call:
+
+```bash
+python -m strategy_lab.cli llm-doctor
+```
+
 ---
 
 ## The AI layer (layer 7)

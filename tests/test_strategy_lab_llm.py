@@ -8,8 +8,13 @@ if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
 from strategy_lab.cli import main  # noqa: E402
-from strategy_lab.llm import AlibabaQwenProvider, make_request, validate_budget  # noqa: E402
-from strategy_lab.llm_workflow import estimate_llm_plan, parse_and_validate_proposal, run_llm_plan  # noqa: E402
+from strategy_lab.llm import AlibabaQwenProvider, alibaba_environment_report, make_request, validate_budget  # noqa: E402
+from strategy_lab.llm_workflow import (  # noqa: E402
+    build_inventory_digest,
+    estimate_llm_plan,
+    parse_and_validate_proposal,
+    run_llm_plan,
+)
 from strategy_lab.models import LLMConfig, LLMMessage  # noqa: E402
 
 
@@ -125,6 +130,36 @@ def test_llm_cli_estimate_and_plan(tmp_path, capsys):
     )
     assert plan_rc == 0
     assert "proposal:" in capsys.readouterr().out
+
+
+def test_llm_cli_doctor_reports_local_alibaba_setup(monkeypatch, capsys):
+    monkeypatch.delenv("DASHSCOPE_API_KEY", raising=False)
+    monkeypatch.setenv("DASHSCOPE_REGION", "us")
+    rc = main(["llm-doctor"])
+    assert rc == 0
+    output = capsys.readouterr().out
+    assert "api key present: False" in output
+    assert "dashscope-us.aliyuncs.com" in output
+
+
+def test_alibaba_environment_report_redacts_key(monkeypatch):
+    monkeypatch.setenv("DASHSCOPE_API_KEY", "sk-1234567890abcdef")
+    report = alibaba_environment_report()
+    assert report["api_key_present"] is True
+    assert report["api_key_preview"] == "sk-1...cdef"
+    assert "1234567890" not in json.dumps(report)
+
+
+def test_inventory_digest_reads_real_inventory_count_fields(tmp_path):
+    latest = _private_inventory(tmp_path)
+    latest_payload = json.loads(latest.read_text(encoding="utf-8"))
+    manifest_path = Path(latest_payload["manifest_path"])
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["source_summaries"] = [{"dataset": "tick_tape", "exists": True, "file_count": 7, "byte_count": 1234}]
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    digest = json.loads(build_inventory_digest(latest))
+    assert digest["sources"][0]["files"] == 7
+    assert digest["sources"][0]["bytes"] == 1234
 
 
 def test_max_model_requires_explicit_allow(tmp_path):
