@@ -59,6 +59,22 @@ except `ForwardLog`, no global state, numpy is the only dependency.
   scope today.
 - No claim of profitability, anywhere.
 
+## Planned experimental layer
+
+The repository may grow a separate Strategy Discovery Lab, documented in
+[strategy-discovery-lab.md](strategy-discovery-lab.md). That layer is allowed
+to generate strategy hypotheses only if it preserves the core boundary:
+
+```text
+discovery is experimental
+validation remains skeptical
+live trading stays out of scope
+```
+
+In other words, the lab may generate candidates; `backtest_sanity` tries to
+falsify them. A candidate that survives historical tests is still only
+`needs_forward` until append-only forward evidence exists.
+
 ## How to inspect without reading every line
 
 1. Read [architecture.md](architecture.md) — the whole design in one page.
@@ -94,3 +110,4 @@ CI runs pytest on Python 3.9 / 3.11 / 3.12.
 - [ ] README layer table, `architecture.md` and `__init__.py` exports stay in sync.
 - [ ] p-value code avoids the p=0 trap (bias-corrected formula, cite if changed).
 - [ ] The "not a panacea" framing survives any README edit.
+- [ ] Experimental discovery docs never imply production suitability or guaranteed profitability.

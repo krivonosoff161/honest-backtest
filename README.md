@@ -76,6 +76,61 @@ Reading order and what each example does (and does **not**) prove: [examples/REA
 - [Architecture](docs/architecture.md) — the seven layers and the meta-caveat.
 - [Project map](docs/project-map.md) — modules, what exists vs not included, reviewer checklist.
 - [Use cases](docs/use-cases.md) — workflows, what this is *not*, residual risk.
+- [Strategy Discovery Lab](docs/strategy-discovery-lab.md) — planned experimental hypothesis sandbox before validation.
+- [Strategy Lab storage](docs/strategy-lab-storage.md) — local data-root layout and manifest rules.
+- [Strategy Lab data model](docs/strategy-lab-data-model.md) — experiment, result, candidate and registry records.
+- [Strategy Lab runtime](docs/strategy-lab-runtime.md) — queues, budgets, reports, Grafana and Obsidian boundaries.
+- [Strategy Lab LLM loop](docs/strategy-lab-llm-loop.md) — provider-neutral research coordinator design.
+- [Strategy Lab roadmap](docs/strategy-lab-roadmap.md) — phased build plan.
+
+---
+
+## Experimental: Strategy Discovery Lab
+
+A planned sandbox for logging and triaging strategy hypotheses before they
+enter the seven-layer validation gauntlet. It is not part of the stable API,
+does not include real market data, and does not claim to find profitable
+strategies.
+
+```text
+strategy_lab generates candidates
+backtest_sanity tries to reject them
+forward evidence decides whether they deserve more attention
+```
+
+See [docs/strategy-discovery-lab.md](docs/strategy-discovery-lab.md).
+
+The first implemented slice is a read-only inventory command. It writes
+manifests and summaries to a private output directory:
+
+```bash
+python -m strategy_lab.cli inventory \
+  --source-root <read-only-research-source> \
+  --tick-root <optional-read-only-tick-root> \
+  --out-dir <private-research-output>
+```
+
+The command inventories available files and schemas. It does not run
+strategies, simulations, LLM calls, or validation.
+
+The next experimental slice is a file-based registry and experiment queue:
+
+```bash
+python -m strategy_lab.cli registry-init \
+  --out-dir <private-research-output>
+
+python -m strategy_lab.cli queue-plan \
+  --plan <experiment-plan.json> \
+  --out-dir <private-research-output>
+
+python -m strategy_lab.cli registry-add \
+  --entry <registry-entry.json> \
+  --out-dir <private-research-output>
+```
+
+Queued plans require explicit budgets and cannot enable LLM calls inside the
+deterministic runner. Registry entries are research records only; statuses such
+as `approved`, `profitable`, `ready`, or `live` are rejected.
 
 ---
 

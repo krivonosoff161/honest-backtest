@@ -51,11 +51,19 @@ reproducibility, already-priced, cost-realism. Majority refute → back to work.
 Each example (01–07) demonstrates exactly one failure mode in ~25 lines on
 synthetic data — usable directly in a course or an onboarding doc.
 
+**6. Strategy discovery governance (planned).**
+A future Strategy Discovery Lab can run many strategy and filter hypotheses,
+but the validation toolkit remains the skeptical gate. The useful output is a
+private registry entry such as "needs forward evidence on this synthetic cluster",
+not a profitability claim.
+
 ## What this is not
 
 - **Not a profitability tool.** Passing all seven layers means "not obviously
   broken", never "this makes money".
 - **Not a backtesting engine** — wrap it around backtrader/vectorbt/your own.
+- **Not a live strategy search daemon.** The Strategy Discovery Lab docs
+  describe a planned offline research architecture, not shipped execution code.
 - **Not robust statistics under all regimes.** The significance layer assumes
   i.i.d. observations; real returns are autocorrelated and regime-switching,
   which makes these p-values optimistic. Use them as a cheap first kill-test,

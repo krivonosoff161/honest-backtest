@@ -16,6 +16,11 @@ venv/
 # runtime artifacts produced by examples
 forward_log.jsonl
 
+# local strategy-lab artifacts (heavy data belongs outside the repo)
+strategy-lab-data/
+lab-runs/
+obsidian-vault/
+
 # secrets / editors / os
 .env
 .vscode/
