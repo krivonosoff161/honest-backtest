@@ -42,22 +42,17 @@ LLM experiment proposals should be machine-readable:
 
 ```json
 {
-  "hypothesis": "VWAP reclaim may improve volume breakout quality on a synthetic high-volatility cluster.",
-  "risk_of_overfit": "High if only one asset or one day supports it.",
-  "next_experiments": [
+  "schema_version": 1,
+  "proposal_type": "strategy_research_plan",
+  "status": "draft",
+  "hypotheses": [
     {
-      "strategy_id": "volume_breakout",
-      "asset_cluster": "synthetic_high_vol",
-      "timeframes": ["5m", "15m"],
-      "filters": {
-        "vwap_reclaim": [true],
-        "benchmark_regime": ["not_down", "up_or_flat"]
-      },
-      "budgets": {
-        "max_variants": 300,
-        "max_runtime_seconds": 600
-      },
-      "stop_condition": "Reject if median MFE/MAE <= 1.1 after first 100 variants."
+      "id": "vwap_reclaim_volume_breakout_001",
+      "asset_group": "synthetic_high_vol",
+      "strategy_family": "volume_breakout",
+      "filters": ["vwap_reclaim", "benchmark_regime_not_down"],
+      "next_action": "Run a bounded offline batch and reject if validation metrics stay weak.",
+      "safety_note": "Offline research only; no live execution and no private paths in the proposal."
     }
   ]
 }

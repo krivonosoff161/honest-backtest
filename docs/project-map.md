@@ -85,12 +85,12 @@ falsify them. A candidate that survives historical tests is still only
 ## How to run checks
 
 ```bash
-python -m pytest -q          # 16 offline tests, seeded, < 1 s
+python -m pytest -q          # full offline suite
 python -m ruff check .
 python examples/01_lookahead_mirage.py    # ... through 07
 ```
 
-CI runs pytest on Python 3.9 / 3.11 / 3.12.
+CI runs pytest and ruff on Python 3.9 / 3.11 / 3.12.
 
 ## How to extend safely
 

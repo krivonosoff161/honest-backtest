@@ -23,8 +23,9 @@ Build a read-only inventory command that scans configured roots:
 Output:
 
 ```text
-manifests/data_sources.json
-reports/inventory_summary.md
+manifests/inventory_<run_id>.json
+manifests/inventory_latest.json
+reports/inventory_<run_id>.md
 ```
 
 No source file mutation.
