@@ -31,6 +31,7 @@ This kit **reduces** self-deception. It does **not** eliminate it.
 | 1 | **Data integrity** | look-ahead, survivorship, out-of-order bars | `data_checks` | [01](examples/01_lookahead_mirage.py) |
 | 2 | **Validation splits** | judging on data you fitted to | `splits` — holdout · walk-forward · purged k-fold | [02](examples/02_insample_collapse.py) |
 | 3 | **Significance** | luck dressed as edge | `significance` — bootstrap CI · permutation · Bonferroni/BH | [04](examples/04_multiple_testing.py) |
+| 3+ | **Named overfitting stats** | a "great" Sharpe born from trying many things | `overfit` — PSR · DSR · MinTRL · PBO (CSCV) | [08](examples/08_deflated_sharpe.py) · [09](examples/09_pbo_cscv.py) |
 | 4 | **Costs** | an edge thinner than fees + slippage | `costs` — gross vs net | [03](examples/03_cost_kills_edge.py) |
 | 5 | **Robustness** | a lucky spike vs a real plateau | `robustness` — param sweep · sub-period stability | [06](examples/06_robustness_plateau.py) |
 | 6 | **Forward** | everything above is just "not broken yet" | `forward.ForwardLog` | [07](examples/07_forward_log.py) |
@@ -60,12 +61,17 @@ python examples/04_multiple_testing.py     # 40 noise strategies, ~2 "win" by lu
 python examples/05_adversarial_review.py   # an AI panel refutes a fake finding
 python examples/06_robustness_plateau.py    # lucky spike vs parameter plateau
 python examples/07_forward_log.py           # append-only forward log = the only evidence
+python examples/08_deflated_sharpe.py       # PSR / DSR / MinTRL — a Sharpe deflates under multiplicity
+python examples/09_pbo_cscv.py              # PBO via CSCV — is the in-sample winner an OOS loser?
 python -m pytest -q                        # the toolkit's own tests
 ```
 
-> Statistical note: the significance layer (bootstrap, sign-flip permutation) treats
-> observations as **i.i.d.** Real returns are autocorrelated, so those p-values/CIs are
-> optimistic on real data — good enough to kill bad ideas cheaply, not to certify good ones.
+> Statistical note: the significance layer (bootstrap, sign-flip permutation, and the
+> PSR/DSR/MinTRL/PBO family) treats observations as **i.i.d.** Real returns are
+> autocorrelated, so those p-values/CIs/probabilities are optimistic on real data —
+> good enough to kill bad ideas cheaply, not to certify good ones. The named
+> overfitting statistics **reduce false confidence; they do not prove profitability**
+> (assumptions and reading guide: [docs/overfitting-statistics.md](docs/overfitting-statistics.md)).
 
 Reading order and what each example does (and does **not**) prove: [examples/README.md](examples/README.md).
 
@@ -76,6 +82,7 @@ Reading order and what each example does (and does **not**) prove: [examples/REA
 - [Architecture](docs/architecture.md) — the seven layers and the meta-caveat.
 - [Project map](docs/project-map.md) — modules, what exists vs not included, reviewer checklist.
 - [Use cases](docs/use-cases.md) — workflows, what this is *not*, residual risk.
+- [Named overfitting statistics](docs/overfitting-statistics.md) — PSR · DSR · MinTRL · PBO (CSCV): assumptions, how to read them, how they gate Strategy Lab candidates.
 - [Strategy Discovery Lab](docs/strategy-discovery-lab.md) — planned experimental hypothesis sandbox before validation.
 - [Strategy Lab storage](docs/strategy-lab-storage.md) — local data-root layout and manifest rules.
 - [Strategy Lab data model](docs/strategy-lab-data-model.md) — experiment, result, candidate and registry records.

@@ -26,7 +26,7 @@ Each layer removes one class of self-deception:
 
 1. **Data integrity** — the cheapest lies. A feature that uses information it wouldn't have had at decision time will look brilliant. A universe of only-survivors hides every failure.
 2. **Validation splits** — you may never judge a strategy on the data you tuned it on. Walk-forward is the honest default for time series; purged k-fold adds a gap so neighbours can't leak.
-3. **Significance** — a positive mean is not an edge until it's distinguishable from luck. Bootstrap the CI; permute to build the null; if you tried many things, correct for it.
+3. **Significance** — a positive mean is not an edge until it's distinguishable from luck. Bootstrap the CI; permute to build the null; if you tried many things, correct for it. The `overfit` module extends this layer with the named statistics reviewers expect — PSR, DSR, MinTRL, PBO via CSCV ([details](overfitting-statistics.md)).
 4. **Costs** — gross returns are fiction. Subtract fees and slippage; if net ≤ 0, there is no edge to trade.
 5. **Robustness** — a real edge is a plateau across parameters and sub-periods, not a single lucky spike.
 6. **Forward** — everything above only proves "not obviously broken". The one honest test is performance on data you had not seen when you decided.

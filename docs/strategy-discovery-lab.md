@@ -19,6 +19,17 @@ The lab's useful output is not a finished trading setup. Its useful output is a
 structured candidate record with enough evidence to decide what should be
 tested harder.
 
+## Statistical gates
+
+Because the lab produces candidates by the batch, it is exactly the setting
+the named overfitting statistics were built for. The lab records every
+variant tried; the validation layer then applies PBO (CSCV) to the full sweep
+matrix, DSR against the full trial list, and PSR/MinTRL to the surviving
+track record. Only candidates that pass these gates move to `needs_forward`.
+Passing grants forward-paper attention, never live permission, and no private
+results appear in this repository. See
+[Named overfitting statistics](overfitting-statistics.md).
+
 ## Related docs
 
 - [Storage](strategy-lab-storage.md)
