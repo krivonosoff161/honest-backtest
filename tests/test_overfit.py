@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """Deterministic tests for the named anti-overfitting statistics (seeded, offline)."""
 import sys
 from pathlib import Path
@@ -18,7 +18,7 @@ from backtest_sanity._synth import toy_returns  # noqa: E402
 from backtest_sanity.overfit import _norm_cdf, _norm_ppf  # noqa: E402
 
 
-# helpers — normal CDF / inverse CDF round-trip
+# helpers -- normal CDF / inverse CDF round-trip
 def test_norm_ppf_inverts_cdf():
     for p in (0.001, 0.05, 0.5, 0.95, 0.999):
         assert abs(_norm_cdf(_norm_ppf(p)) - p) < 1e-7
@@ -111,7 +111,7 @@ def _noise_matrix(t=320, n=20, seed=0):
 
 def test_pbo_high_for_pure_noise():
     res = probability_of_backtest_overfitting(_noise_matrix(seed=11), n_blocks=8)
-    assert res["pbo"] > 0.35       # noise winner is random OOS — around 0.5
+    assert res["pbo"] > 0.35       # noise winner is random OOS -- around 0.5
     assert res["n_combinations"] == 70
 
 

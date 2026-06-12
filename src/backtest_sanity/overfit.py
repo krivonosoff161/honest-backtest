@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
-"""Layer 3 (extension) — named anti-overfitting statistics.
+﻿# -*- coding: utf-8 -*-
+"""Layer 3 (extension) -- named anti-overfitting statistics.
 
 probabilistic_sharpe_ratio          : P(true Sharpe > benchmark), adjusting for
                                       skewness, kurtosis and sample length.
@@ -18,14 +18,14 @@ Methods follow the published definitions (no code copied):
 - Bailey, Borwein, Lopez de Prado & Zhu, "The Probability of Backtest
   Overfitting" (PBO via combinatorially symmetric cross-validation, CSCV).
 
-Assumptions — read before trusting a number:
+Assumptions -- read before trusting a number:
 - Sharpe ratios are PER-PERIOD (not annualized); the benchmark must be on the
   same scale. Moments are population moments (ddof=0).
 - The PSR/DSR sampling distribution assumes returns are stationary and not
   strongly autocorrelated; real returns violate this, making the numbers
   OPTIMISTIC. Same caveat as the rest of layer 3.
 - DSR needs the Sharpe ratios of ALL tried variants (including abandoned
-  ones). Feeding it only the survivors understates the deflation — garbage
+  ones). Feeding it only the survivors understates the deflation -- garbage
   in, false confidence out.
 - These statistics reduce false confidence. They do not prove profitability,
   and passing them does not certify a strategy. Kill-tests only.
@@ -46,7 +46,7 @@ def _norm_cdf(x: float) -> float:
 
 def _norm_ppf(p: float) -> float:
     """Inverse standard-normal CDF (Acklam's rational approximation, ~1e-9
-    relative error) — keeps the package numpy-only, no scipy."""
+    relative error) -- keeps the package numpy-only, no scipy."""
     if not 0.0 < p < 1.0:
         raise ValueError("p must be in the open interval (0, 1)")
     a = (-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02,
@@ -76,12 +76,12 @@ def _norm_ppf(p: float) -> float:
 
 
 def _moments(returns):
-    """n, per-period Sharpe, skewness, kurtosis (non-excess; normal ≈ 3)."""
+    """n, per-period Sharpe, skewness, kurtosis (non-excess; normal ~ 3)."""
     arr = np.asarray(returns, dtype=float)
     n = int(arr.size)
     if n < 3:
         raise ValueError("need at least 3 observations to estimate Sharpe "
-                         "and higher moments — a shorter series proves nothing")
+                         "and higher moments -- a shorter series proves nothing")
     if not np.all(np.isfinite(arr)):
         raise ValueError("returns contain NaN or inf")
     mu = float(np.mean(arr))
@@ -89,7 +89,7 @@ def _moments(returns):
     m2 = float(np.mean(centered ** 2))
     if m2 <= 0.0:
         raise ValueError("zero variance: Sharpe ratio is undefined for a flat "
-                         "series — nothing to validate")
+                         "series -- nothing to validate")
     skew = float(np.mean(centered ** 3)) / m2 ** 1.5
     kurt = float(np.mean(centered ** 4)) / m2 ** 2
     return n, mu / math.sqrt(m2), skew, kurt
@@ -100,7 +100,7 @@ def _sharpe_variance_term(sr: float, skew: float, kurt: float) -> float:
     term = 1.0 - skew * sr + (kurt - 1.0) / 4.0 * sr ** 2
     if term <= 0.0:
         raise ValueError("non-positive Sharpe variance estimate (extreme "
-                         "skew/kurtosis vs Sharpe) — sample too pathological "
+                         "skew/kurtosis vs Sharpe) -- sample too pathological "
                          "to score; inspect the data instead")
     return term
 
@@ -111,7 +111,7 @@ def probabilistic_sharpe_ratio(returns, benchmark_sr: float = 0.0):
     Adjusts the naive Sharpe for sample length, skewness and kurtosis: a short,
     fat-tailed track record gets less credit for the same point estimate.
     `benchmark_sr` must be per-period, like the computed Sharpe. PSR close to
-    1.0 means "hard to explain by estimation noise alone" — it does NOT mean
+    1.0 means "hard to explain by estimation noise alone" -- it does NOT mean
     the edge survives costs, regime change, or multiple testing (see
     `deflated_sharpe_ratio` for the latter).
     """
@@ -134,7 +134,7 @@ def minimum_track_record_length(returns, benchmark_sr: float = 0.0,
     assuming the observed Sharpe/skew/kurtosis persist (a generous assumption).
 
     Returns `min_n = inf` when the observed Sharpe does not exceed the
-    benchmark — no track record length can rescue it. `sufficient` compares the
+    benchmark -- no track record length can rescue it. `sufficient` compares the
     actual sample size against `min_n`; an insufficient track record means
     "keep collecting forward evidence", never "trust it anyway".
     """
@@ -162,7 +162,7 @@ def expected_max_sharpe(trial_sharpes):
     (true Sharpe 0), with luck-spread estimated from the trials themselves.
 
     `trial_sharpes` must contain the per-period Sharpe of ALL tried variants,
-    not just the survivors — selective reporting here defeats the whole point.
+    not just the survivors -- selective reporting here defeats the whole point.
     """
     sharpes = np.asarray(trial_sharpes, dtype=float)
     if sharpes.size < 2:
@@ -184,7 +184,7 @@ def deflated_sharpe_ratio(returns, trial_sharpes):
     Sharpe ratios of every variant tried during the search (including the
     candidate and every abandoned configuration). More trials, or a wider
     spread of trial outcomes, raise the luck benchmark and lower the DSR.
-    A high DSR still proves nothing forward — it only says the result is not
+    A high DSR still proves nothing forward -- it only says the result is not
     trivially explained by trying many things.
     """
     sr_star = expected_max_sharpe(trial_sharpes)
@@ -200,7 +200,7 @@ def deflated_sharpe_ratio(returns, trial_sharpes):
 
 def _sharpe_score(returns) -> float:
     """Default CSCV ranking metric: per-period Sharpe; flat series score 0.0
-    (neutral — a zero-variance fold neither wins nor loses)."""
+    (neutral -- a zero-variance fold neither wins nor loses)."""
     arr = np.asarray(returns, dtype=float)
     sd = float(np.std(arr))
     if sd == 0.0:
@@ -218,13 +218,13 @@ def probability_of_backtest_overfitting(trial_returns, n_blocks: int = 8,
     into `n_blocks` even blocks; for every way to pick half the blocks as
     in-sample, the in-sample winner (by `metric`, default per-period Sharpe) is
     ranked on the out-of-sample half. PBO is the fraction of splits where the
-    in-sample winner lands in the bottom half out-of-sample — i.e. how often
+    in-sample winner lands in the bottom half out-of-sample -- i.e. how often
     "best in backtest" was just overfit.
 
     Reading the number: pure noise gives PBO around 0.5 (the winner is random
     out-of-sample); a genuinely dominant variant pulls PBO toward 0; PBO well
     above 0.5 means the selection actively favors what fails forward. A low
-    PBO does not certify the strategy — it only fails to convict the search.
+    PBO does not certify the strategy -- it only fails to convict the search.
 
     Block splitting preserves within-block time order but, like the rest of
     layer 3, ignores dependence ACROSS blocks; strong autocorrelation makes
