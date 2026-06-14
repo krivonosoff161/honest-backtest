@@ -14,7 +14,8 @@ from strategy_lab.registry import append_registry_entry, initialize_registry, qu
 
 def _write_json(path: Path, payload: dict) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(payload), encoding="utf-8", newline="\n")
+    with path.open("w", encoding="utf-8", newline="\n") as handle:
+        handle.write(json.dumps(payload))
     return path
 
 

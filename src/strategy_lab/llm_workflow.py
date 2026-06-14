@@ -59,7 +59,7 @@ def run_llm_plan(inventory_latest: Path, config: LLMConfig) -> LLMRunResult:
     validate_live_switches(config)
 
     request_path = run_dir / "request.json"
-    request_path.write_text(json.dumps(request.to_dict(), indent=2, sort_keys=True), encoding="utf-8", newline="\n")
+    _write_json(request_path, request.to_dict())
 
     provider = provider_for_name(config.provider)
     response = provider.complete(request, config)
@@ -71,8 +71,8 @@ def run_llm_plan(inventory_latest: Path, config: LLMConfig) -> LLMRunResult:
     proposal_path.parent.mkdir(parents=True, exist_ok=True)
     cost_path.parent.mkdir(parents=True, exist_ok=True)
 
-    response_path.write_text(json.dumps(response.to_dict(), indent=2, sort_keys=True), encoding="utf-8", newline="\n")
-    proposal_path.write_text(json.dumps(proposal, indent=2, sort_keys=True), encoding="utf-8", newline="\n")
+    _write_json(response_path, response.to_dict())
+    _write_json(proposal_path, proposal)
     _append_jsonl(
         cost_path,
         {
@@ -216,6 +216,12 @@ def _read_report_excerpt(report_path: Path) -> str:
 def _append_jsonl(path: Path, item: dict[str, Any]) -> None:
     with path.open("a", encoding="utf-8", newline="\n") as handle:
         handle.write(json.dumps(item, sort_keys=True) + "\n")
+
+
+def _write_json(path: Path, item: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8", newline="\n") as handle:
+        handle.write(json.dumps(item, indent=2, sort_keys=True) + "\n")
 
 
 def _utc_now() -> str:

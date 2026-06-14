@@ -17,7 +17,8 @@ from strategy_lab.models import InventoryConfig  # noqa: E402
 
 def _write(path: Path, text: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(text, encoding="utf-8", newline="\n")
+    with path.open("w", encoding="utf-8", newline="\n") as handle:
+        handle.write(text)
 
 
 def _write_gz(path: Path, text: str) -> None:
