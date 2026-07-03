@@ -24,6 +24,28 @@ This kit **reduces** self-deception. It does **not** eliminate it.
 
 ---
 
+## Role in the trading stack
+
+`honest-backtest` is the skeptical validation layer for AI-assisted trading
+research:
+
+```text
+AI / Strategy Lab proposes an idea
+honest-backtest tries to falsify it
+forward/paper evidence decides whether it deserves more attention
+live execution stays outside this repository
+```
+
+That distinction matters. The AI step can help search, summarize, and challenge
+ideas, but its output is not a signal until it survives deterministic validation,
+cost checks, robustness checks, adversarial review, and forward logging.
+
+This repo does not contain private strategy logic, broker integration, exchange
+keys, or a promise of profitability. It is the validator you put between
+"interesting idea" and "maybe worth paper tracking."
+
+---
+
 ## The architecture (7 layers)
 
 | # | Layer | Catches | Module | Example |
