@@ -12,6 +12,23 @@ The honest output of the full stack is never "this works"; it is *"this is
 not yet falsified — now run it forward."* (See
 [architecture.md](architecture.md) for the layer-by-layer rationale.)
 
+## Public trading-stack relationship
+
+`honest-backtest` is the validation layer in the AI-assisted trading direction:
+
+```text
+Strategy Lab / private trading research flow
+  -> candidate idea or setup
+  -> honest-backtest validation and adversarial review
+  -> append-only forward/paper evidence
+  -> separate execution decision outside this repository
+```
+
+The repository's public role is deliberately narrow: it helps reject weak
+AI-generated or human-generated trading ideas before they become operational
+habits. It does not ship private strategies, real market datasets, broker
+connectors, order execution, or a profitability claim.
+
 ## Mental model
 
 ```
