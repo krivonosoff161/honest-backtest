@@ -1,5 +1,10 @@
 # Strategy Lab Storage
 
+Portfolio-level documentation and storage authority is defined in the
+[Documentation Contract](https://github.com/krivonosoff161/krivonosoff161/blob/main/docs/documentation-contract.md).
+This page narrows that contract for validation and Strategy Lab handoff
+artifacts.
+
 ## Rule
 
 Repository files contain code, documentation, examples, and tiny synthetic

@@ -29,6 +29,11 @@ AI-generated or human-generated trading ideas before they become operational
 habits. It does not ship private strategies, real market datasets, broker
 connectors, order execution, or a profitability claim.
 
+Portfolio-level documentation authority and public/private storage rules live in
+the [Documentation Contract](https://github.com/krivonosoff161/krivonosoff161/blob/main/docs/documentation-contract.md).
+This repository owns the validation layer, not private strategy discovery or
+live execution.
+
 ## Mental model
 
 ```
