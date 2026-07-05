@@ -44,6 +44,11 @@ This repo does not contain private strategy logic, broker integration, exchange
 keys, or a promise of profitability. It is the validator you put between
 "interesting idea" and "maybe worth paper tracking."
 
+Portfolio-level documentation authority and public/private storage rules live in
+the [Documentation Contract](https://github.com/krivonosoff161/krivonosoff161/blob/main/docs/documentation-contract.md).
+This repository owns validation methods and synthetic examples; it must not
+publish private trading edge, live parameters, or candidate rankings.
+
 ---
 
 ## The architecture (7 layers)
