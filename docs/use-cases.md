@@ -63,8 +63,8 @@ as "needs forward evidence", not a profitability claim.
 - **Not a profitability tool.** Passing all seven layers means "not obviously
   broken", never "this makes money".
 - **Not a backtesting engine** — wrap it around backtrader/vectorbt/your own.
-- **Not a live strategy search daemon.** The Strategy Discovery Lab docs
-  describe a planned offline research architecture, not shipped execution code.
+- **Not a live strategy search daemon.** The shipped experimental Strategy
+  Discovery Lab is an offline local research surface, not execution code.
 - **Not robust statistics under all regimes.** The significance layer assumes
   i.i.d. observations; real returns are autocorrelated and regime-switching,
   which makes these p-values optimistic. Use them as a cheap first kill-test,

@@ -37,5 +37,8 @@ engine or a profitability claim.
 
 The sibling `trading-bot-v2` project may submit a public-safe candidate summary
 to its local validation bridge. This repository never receives exchange keys,
-private trade rows, candidate rankings, or execution authority. A passing
-validation result means only `needs_forward`, never live permission.
+private trade rows, candidate rankings, or execution authority. A generic
+`backtest_sanity` pass means only `needs_forward`, never live permission. A
+producer bridge may map a complete hard-validation result to
+`PAPER_FORWARD_READY` under the public contract; that still permits only
+paper/forward observation and never execution.
