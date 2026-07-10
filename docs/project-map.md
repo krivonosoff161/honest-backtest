@@ -66,7 +66,7 @@ except `ForwardLog`, no global state, numpy is the only dependency.
 
 ## What exists today
 
-- All seven layers implemented, with 59 tests and nine worked examples
+- All seven layers implemented, with 65 tests and nine worked examples
   (`examples/01..09`, all on synthetic data, no keys).
 - The named overfitting-statistics exports live in `overfit.py` and are part of
   the public API.
