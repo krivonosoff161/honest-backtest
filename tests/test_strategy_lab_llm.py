@@ -8,7 +8,13 @@ if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
 from strategy_lab.cli import main  # noqa: E402
-from strategy_lab.llm import AlibabaQwenProvider, alibaba_environment_report, make_request, validate_budget  # noqa: E402
+from strategy_lab.llm import (  # noqa: E402
+    AlibabaQwenProvider,
+    alibaba_environment_report,
+    make_request,
+    read_daily_spend,
+    validate_budget,
+)
 from strategy_lab.llm_workflow import (  # noqa: E402
     build_inventory_digest,
     estimate_llm_plan,
@@ -97,6 +103,16 @@ def test_stub_llm_plan_writes_guarded_artifacts(tmp_path):
     assert proposal["proposal_type"] == "strategy_research_plan"
     assert proposal["status"] == "draft"
     assert (tmp_path / "llm" / "llm-costs" / "2000-01-02.jsonl").exists()
+
+
+def test_daily_spend_ignores_other_calendar_days(tmp_path):
+    costs = tmp_path / "llm-costs"
+    costs.mkdir()
+    (costs / "2026-07-09.jsonl").write_text('{"estimated_usd": 9.0}\n', encoding="utf-8")
+    (costs / "2026-07-10.jsonl").write_text(
+        '{"estimated_usd": 0.25}\n{"estimated_usd": 0.75}\n', encoding="utf-8"
+    )
+    assert read_daily_spend(tmp_path, day="2026-07-10") == 1.0
 
 
 def test_llm_cli_estimate_and_plan(tmp_path, capsys):

@@ -39,8 +39,9 @@ lone spike over the grid median is tuning luck; a plateau plus
 **3. Forward discipline.**
 Once a strategy survives layers 1–5, stop re-backtesting: log every decision
 with `ForwardLog` *before* outcomes exist, append outcomes later, and score the
-join (example 07). Append-only JSONL means the scoreboard can't be quietly
-rewritten.
+join (example 07). `ForwardLog` appends through its own write method, but plain
+JSONL is not tamper-proof; systems that need stronger evidence must add IDs,
+locking, hash chains, signing, or write-once storage around it.
 
 **4. Adversarial review of a writeup.**
 Feed the claim to `adversarial_review` with several skeptical verifiers (LLM
@@ -51,11 +52,11 @@ reproducibility, already-priced, cost-realism. Majority refute → back to work.
 Each example (01–07) demonstrates exactly one failure mode in ~25 lines on
 synthetic data — usable directly in a course or an onboarding doc.
 
-**6. Strategy discovery governance (planned).**
-A future Strategy Discovery Lab can run many strategy and filter hypotheses,
-but the validation toolkit remains the skeptical gate. The useful output is a
-private registry entry such as "needs forward evidence on this synthetic cluster",
-not a profitability claim.
+**6. Strategy discovery governance (experimental).**
+The shipped experimental Strategy Discovery Lab can inventory local sources and
+manage bounded private registry/queue records, but the validation toolkit
+remains the skeptical gate. The useful output is a private registry entry such
+as "needs forward evidence", not a profitability claim.
 
 ## What this is not
 

@@ -66,8 +66,10 @@ except `ForwardLog`, no global state, numpy is the only dependency.
 
 ## What exists today
 
-- All seven layers implemented, each with tests (16 total) and a worked
-  example (`examples/01..07`, all on synthetic data, no keys).
+- All seven layers implemented, with 59 tests and nine worked examples
+  (`examples/01..09`, all on synthetic data, no keys).
+- The named overfitting-statistics exports live in `overfit.py` and are part of
+  the public API.
 - Deterministic, seeded examples — outputs are reproducible.
 
 ## What is NOT included (by design)
@@ -81,11 +83,13 @@ except `ForwardLog`, no global state, numpy is the only dependency.
   scope today.
 - No claim of profitability, anywhere.
 
-## Planned experimental layer
+## Shipped experimental layer
 
-The repository may grow a separate Strategy Discovery Lab, documented in
-[strategy-discovery-lab.md](strategy-discovery-lab.md). That layer is allowed
-to generate strategy hypotheses only if it preserves the core boundary:
+The repository ships a small separate Strategy Discovery Lab, documented in
+[strategy-lab-experimental.md](strategy-lab-experimental.md). It inventories
+private local sources and manages bounded registry/queue records; it does not
+run a live strategy or change the stable validation API. It preserves the core
+boundary:
 
 ```text
 discovery is experimental
@@ -100,7 +104,7 @@ falsify them. A candidate that survives historical tests is still only
 ## How to inspect without reading every line
 
 1. Read [architecture.md](architecture.md) — the whole design in one page.
-2. Run the examples in order (`01` → `07`): each prints the failure it catches
+2. Run the examples in order (`01` → `09`): each prints the failure it catches
    and a one-line lesson. See [examples/README.md](../examples/README.md).
 3. Skim `tests/test_backtest_sanity.py` names — one or more per layer.
 

@@ -17,7 +17,16 @@ def holdout(n: int, test_frac: float = 0.3):
 def walk_forward(n: int, train_size: int, test_size: int, step: int | None = None):
     """List of (train_idx, test_idx) rolling forward. Each test window is strictly
     after its train window — the only way to mimic 'deciding before you see it'."""
-    step = step or test_size
+    if n < 0:
+        raise ValueError("n must be >= 0")
+    if train_size <= 0:
+        raise ValueError("train_size must be > 0")
+    if test_size <= 0:
+        raise ValueError("test_size must be > 0")
+    if step is None:
+        step = test_size
+    if step <= 0:
+        raise ValueError("step must be > 0")
     out = []
     start = 0
     while start + train_size + test_size <= n:

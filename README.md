@@ -106,6 +106,9 @@ Reading order and what each example does (and does **not**) prove: [examples/REA
 
 ## Docs
 
+- [Documentation index](docs/index.md) — stable versus experimental surfaces and reading order.
+- [Public API reference](docs/api-reference.md) — supported `backtest_sanity` exports and limits.
+- [Strategy Lab experimental interface](docs/strategy-lab-experimental.md) — shipped local/private CLI and boundaries.
 - [Architecture](docs/architecture.md) — the seven layers and the meta-caveat.
 - [Project map](docs/project-map.md) — modules, what exists vs not included, reviewer checklist.
 - [Use cases](docs/use-cases.md) — workflows, what this is *not*, residual risk.

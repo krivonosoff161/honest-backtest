@@ -3,6 +3,8 @@
 import sys
 from pathlib import Path
 
+import pytest
+
 _SRC = Path(__file__).resolve().parents[1] / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
@@ -48,6 +50,15 @@ def test_holdout():
 def test_walk_forward_advances():
     wf = walk_forward(1000, 600, 100)
     assert wf and all(max(tr) < min(te) for tr, te in wf)
+
+
+@pytest.mark.parametrize(
+    ("n", "train_size", "test_size", "step"),
+    [(-1, 10, 2, None), (100, 0, 2, None), (100, 10, 0, None), (100, 10, 2, 0), (100, 10, 2, -1)],
+)
+def test_walk_forward_rejects_non_advancing_or_invalid_sizes(n, train_size, test_size, step):
+    with pytest.raises(ValueError):
+        walk_forward(n, train_size, test_size, step)
 
 
 def test_purged_kfold_no_overlap_and_gap():
