@@ -11,6 +11,7 @@ import os
 import urllib.error
 import urllib.request
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Protocol
 
@@ -132,20 +133,22 @@ def validate_live_switches(config: LLMConfig) -> None:
         raise ValueError("live calls require STRATEGY_LAB_LLM_ENABLED=true")
 
 
-def read_daily_spend(out_dir: Path) -> float:
+def read_daily_spend(out_dir: Path, *, day: str | None = None) -> float:
+    """Return spend from one UTC calendar-day ledger, not all historical runs."""
     cost_dir = out_dir / "llm-costs"
-    if not cost_dir.exists():
+    target_day = day or datetime.now(timezone.utc).date().isoformat()
+    path = cost_dir / f"{target_day}.jsonl"
+    if not path.exists():
         return 0.0
     total = 0.0
-    for path in cost_dir.glob("*.jsonl"):
-        try:
-            for line in path.read_text(encoding="utf-8").splitlines():
-                if not line.strip():
-                    continue
-                item = json.loads(line)
-                total += float(item.get("estimated_usd", 0.0))
-        except (OSError, ValueError, json.JSONDecodeError):
-            continue
+    try:
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if not line.strip():
+                continue
+            item = json.loads(line)
+            total += float(item.get("estimated_usd", 0.0))
+    except (OSError, ValueError, json.JSONDecodeError):
+        return 0.0
     return round(total, 6)
 
 

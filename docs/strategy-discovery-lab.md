@@ -1,8 +1,11 @@
 # Strategy Discovery Lab
 
+Status: **EXPERIMENTAL / SHIPPED**. The package and CLI are importable and
+tested, but the schema and local-workflow details may change.
+
 ## Purpose
 
-The Strategy Discovery Lab is a planned experimental sandbox for generating,
+The Strategy Discovery Lab is an experimental local sandbox for generating,
 logging, and triaging strategy hypotheses before they enter the existing
 seven-layer validation gauntlet.
 
