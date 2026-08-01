@@ -1,0 +1,51 @@
+{
+  "schema": "TradingPortfolioRoadmapProjection.v1",
+  "version": "2026.08.01",
+  "status": "current",
+  "verified_date": "2026-08-01",
+  "documentation_owner": "honest-backtest",
+  "upstream_documentation_owner": "trading-bot-v2",
+  "projection_role": "pinned_module_projection",
+  "portfolio_integrator": "krivonosoff161",
+  "verified_against": "0f537a8fa0b80b17d100d38c0696f9a07d8e4ba6",
+  "upstream": {
+    "repository": "krivonosoff161/trading-bot-v2",
+    "schema": "TradingPortfolioRoadmap.v1",
+    "version": "2026.08.01",
+    "commit_sha": "c20322f887977c5e3c3ec2c242ca560617d056fa",
+    "sha256": "29c479fc93d5324c40746359700935892488928e4cb5312556f27cc74639ac57"
+  },
+  "module": {
+    "module_id": "honest_backtest_validation",
+    "owner_repository": "honest-backtest",
+    "purpose": "independently try to falsify candidates with deterministic validation methods",
+    "status": "implemented_bounded",
+    "authority": "none",
+    "dependencies": ["deterministic_simulation_backtest"],
+    "implemented_evidence": [
+      "src/backtest_sanity",
+      "tests/test_backtest_sanity.py",
+      "tests/test_overfit.py",
+      "docs/validation-bridge-contract.md"
+    ],
+    "missing_evidence": "time-series-aware inference for every dependence structure and untouched future evidence",
+    "next_gate": "maintain a versioned public bridge and treat pass as not-rejected only",
+    "public_private_boundary": "methods and bridge schemas are public; candidates, parameters, data, and runtime state remain outside this repository"
+  },
+  "current_documents": [
+    "README.md",
+    "CURRENT_STATE.md",
+    "ARCHITECTURE.md",
+    "ROADMAP.md",
+    "docs/index.md",
+    "docs/architecture.md",
+    "docs/project-map.md",
+    "docs/trading-portfolio-roadmap.md"
+  ],
+  "absolute_boundaries": [
+    "no trading authority",
+    "no private strategy or runtime data",
+    "no profitability or live-readiness claim",
+    "no automatic execution promotion"
+  ]
+}

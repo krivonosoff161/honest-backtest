@@ -1,5 +1,15 @@
 # honest-backtest
 
+Status: **CURRENT**
+
+- Verified: 2026-08-01
+- Verified against: `0f537a8fa0b80b17d100d38c0696f9a07d8e4ba6`
+- Scope: public entry point, stable validator, and experimental research boundary
+- Evidence: 68 collected test functions, including the documentation contract,
+  and the exact source modules linked below
+- Residual risks: synthetic deterministic evidence cannot prove a market edge.
+- Next gate: keep this page aligned with the machine portfolio projection.
+
 [![Tests](https://github.com/krivonosoff161/honest-backtest/actions/workflows/tests.yml/badge.svg)](https://github.com/krivonosoff161/honest-backtest/actions/workflows/tests.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
@@ -107,6 +117,10 @@ Reading order and what each example does (and does **not**) prove: [examples/REA
 ## Docs
 
 - [Documentation index](docs/index.md) — stable versus experimental surfaces and reading order.
+- [Current state](CURRENT_STATE.md) — verified capability state and claim ceilings.
+- [Repository architecture](ARCHITECTURE.md) — ownership and cross-repository boundary.
+- [Current roadmap](ROADMAP.md) — completed/current/next/later evidence gates.
+- [Trading Portfolio projection](docs/trading-portfolio-roadmap.md) — bounded validator role in the shared map.
 - [Public API reference](docs/api-reference.md) — supported `backtest_sanity` exports and limits.
 - [Strategy Lab experimental interface](docs/strategy-lab-experimental.md) — shipped local/private CLI and boundaries.
 - [Architecture](docs/architecture.md) — the seven layers and the meta-caveat.
@@ -118,15 +132,16 @@ Reading order and what each example does (and does **not**) prove: [examples/REA
 - [Strategy Lab data model](docs/strategy-lab-data-model.md) — experiment, result, candidate and registry records.
 - [Strategy Lab runtime](docs/strategy-lab-runtime.md) — queues, budgets, reports, Grafana and Obsidian boundaries.
 - [Strategy Lab LLM loop](docs/strategy-lab-llm-loop.md) — provider-neutral research coordinator design.
-- [Strategy Lab roadmap](docs/strategy-lab-roadmap.md) — phased build plan.
+- [Historical Strategy Lab phase plan](docs/history/strategy-lab-roadmap.md) — superseded planning evidence only.
 
 ---
 
 ## Experimental: Strategy Discovery Lab
 
-A planned sandbox for logging and triaging strategy hypotheses before they
-enter the seven-layer validation gauntlet. It is not part of the stable API,
-does not include real market data, and does not claim to find profitable
+An implemented but experimental sandbox for inventorying local research inputs,
+maintaining bounded registry/queue records, and producing guarded advisory
+drafts before the seven-layer validation gauntlet. It is not part of the stable
+API, does not include real market data, and does not claim to find profitable
 strategies.
 
 ```text
