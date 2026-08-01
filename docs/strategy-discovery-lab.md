@@ -39,7 +39,8 @@ results appear in this repository. See
 - [Data model](strategy-lab-data-model.md)
 - [Runtime](strategy-lab-runtime.md)
 - [LLM loop](strategy-lab-llm-loop.md)
-- [Roadmap](strategy-lab-roadmap.md)
+- [Current repository roadmap](../ROADMAP.md)
+- [Historical Strategy Lab phase plan](history/strategy-lab-roadmap.md)
 - [Core validation architecture](architecture.md)
 
 ## Non-goals

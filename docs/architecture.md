@@ -1,5 +1,14 @@
 # The validation architecture
 
+Status: **CURRENT**
+
+- Verified: 2026-08-01
+- Verified against: `0f537a8fa0b80b17d100d38c0696f9a07d8e4ba6`
+- Scope: statistical validation layers and their assumptions
+- Evidence: `src/backtest_sanity` and focused tests
+- Residual risks: several methods assume independent observations.
+- Next gate: add time-series-aware alternatives only with explicit tests and assumptions.
+
 ```
    a backtest result you want to believe
                   │

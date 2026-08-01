@@ -1,5 +1,14 @@
 # Project map — for reviewers and maintainers
 
+Status: **CURRENT**
+
+- Verified: 2026-08-01
+- Verified against: `0f537a8fa0b80b17d100d38c0696f9a07d8e4ba6`
+- Scope: modules, ownership, stable/experimental surfaces, and repository boundary
+- Evidence: `src/`, `tests/`, and [Trading Portfolio projection](trading-portfolio-roadmap.md)
+- Residual risks: line counts are orientation only and dynamic consumers live outside this repository.
+- Next gate: keep module claims and test counts machine-checked.
+
 ## What it does
 
 `backtest_sanity` is a set of small, pure validation functions arranged in
@@ -66,7 +75,7 @@ except `ForwardLog`, no global state, numpy is the only dependency.
 
 ## What exists today
 
-- All seven layers implemented, with 65 tests and nine worked examples
+- All seven layers implemented, with 68 collected test functions and nine worked examples
   (`examples/01..09`, all on synthetic data, no keys).
 - The named overfitting-statistics exports live in `overfit.py` and are part of
   the public API.
