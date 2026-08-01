@@ -38,5 +38,7 @@ no edge, runtime row, credential, account, recipient, or authority crosses
 ```
 
 The machine projection records the exact upstream schema version, commit, and
-content hash reviewed for this alignment. A hash match proves document identity,
-not operational readiness or statistical quality.
+content hash reviewed for this alignment. The digest is calculated over
+canonical UTF-8 text with LF line endings, so a Windows CRLF checkout has the
+same identity while any semantic content change remains detectable. A hash
+match proves document identity, not operational readiness or statistical quality.

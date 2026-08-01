@@ -5,7 +5,7 @@ Status: **CURRENT**
 - Verified: 2026-08-01
 - Verified against: `0f537a8fa0b80b17d100d38c0696f9a07d8e4ba6`
 - Scope: public entry point, stable validator, and experimental research boundary
-- Evidence: 68 collected test functions, including the documentation contract,
+- Evidence: 70 collected test functions, including the documentation contract,
   and the exact source modules linked below
 - Residual risks: synthetic deterministic evidence cannot prove a market edge.
 - Next gate: keep this page aligned with the machine portfolio projection.
