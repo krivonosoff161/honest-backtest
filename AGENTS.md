@@ -17,7 +17,9 @@ Resolve the exact checkout through `E:\AI\workbench\registry\projects.yaml`.
 
 1. Run `wb git-preflight` for the registry id that resolves to this exact checkout.
 2. Read local `SESSION.md`, then `TASK.md` only when its status is active.
-3. Read `README.md`, `docs/index.md`, `docs/architecture.md`, `docs/project-map.md`, and `docs/strategy-lab-roadmap.md`.
+3. Read `README.md`, `CURRENT_STATE.md`, `ARCHITECTURE.md`, `ROADMAP.md`,
+   `docs/index.md`, `docs/project-map.md`, and
+   `docs/trading-portfolio-roadmap.md`.
 4. Search existing modules, tests, examples, and documented commands before proposing a new surface.
 5. State verified facts, causal chain, scope, and the minimal plan before changes.
 

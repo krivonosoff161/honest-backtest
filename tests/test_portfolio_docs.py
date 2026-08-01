@@ -1,13 +1,16 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
 from scripts.check_portfolio_docs import (
     EXPECTED_GOVERNANCE,
+    EXPECTED_HASH_CANONICALIZATION,
     EXPECTED_REPOSITORY_SHA,
     EXPECTED_UPSTREAM_HASH,
     EXPECTED_UPSTREAM_SHA,
+    canonical_text_sha256,
     validate,
 )
 
@@ -32,7 +35,7 @@ def _fixture_root(tmp_path: Path) -> Path:
         "# History\n\nStatus: **HISTORICAL / SUPERSEDED**\n", encoding="utf-8"
     )
     (tmp_path / "tests/test_contract.py").write_text(
-        "\n".join(f"def test_{index}():\n    pass" for index in range(68)),
+        "\n".join(f"def test_{index}():\n    pass" for index in range(70)),
         encoding="utf-8",
     )
     projection = {
@@ -47,6 +50,7 @@ def _fixture_root(tmp_path: Path) -> Path:
             "schema": "TradingPortfolioRoadmap.v1",
             "version": "2026.08.01",
             "commit_sha": EXPECTED_UPSTREAM_SHA,
+            "hash_canonicalization": EXPECTED_HASH_CANONICALIZATION,
             "sha256": EXPECTED_UPSTREAM_HASH,
         },
         "module": {
@@ -135,3 +139,24 @@ def test_direct_upstream_hash_mismatch_is_rejected(tmp_path: Path) -> None:
     upstream = tmp_path / "upstream.yaml"
     upstream.write_text("synthetic different roadmap\n", encoding="utf-8")
     assert "upstream roadmap content hash mismatch" in validate(root, upstream)
+
+
+def test_upstream_hash_is_portable_across_lf_and_crlf(tmp_path: Path) -> None:
+    lf = tmp_path / "lf.yaml"
+    crlf = tmp_path / "crlf.yaml"
+    lf.write_bytes(b"schema: synthetic\nvalue: one\n")
+    crlf.write_bytes(b"schema: synthetic\r\nvalue: one\r\n")
+
+    expected = hashlib.sha256(b"schema: synthetic\nvalue: one\n").hexdigest()
+
+    assert canonical_text_sha256(lf) == expected
+    assert canonical_text_sha256(crlf) == expected
+
+
+def test_upstream_hash_changes_when_content_changes(tmp_path: Path) -> None:
+    original = tmp_path / "original.yaml"
+    changed = tmp_path / "changed.yaml"
+    original.write_text("status: current\n", encoding="utf-8")
+    changed.write_text("status: superseded\n", encoding="utf-8")
+
+    assert canonical_text_sha256(original) != canonical_text_sha256(changed)

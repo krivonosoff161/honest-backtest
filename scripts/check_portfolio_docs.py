@@ -13,7 +13,8 @@ ROOT = Path(__file__).resolve().parents[1]
 PROJECTION = Path("docs/trading-portfolio-roadmap.yaml")
 EXPECTED_REPOSITORY_SHA = "0f537a8fa0b80b17d100d38c0696f9a07d8e4ba6"
 EXPECTED_UPSTREAM_SHA = "c20322f887977c5e3c3ec2c242ca560617d056fa"
-EXPECTED_UPSTREAM_HASH = "29c479fc93d5324c40746359700935892488928e4cb5312556f27cc74639ac57"
+EXPECTED_UPSTREAM_HASH = "580814ae7aab611ab9e33253a0ffbc1d64a719ea5d2aed2e231fc41bb4760270"
+EXPECTED_HASH_CANONICALIZATION = "utf8_lf"
 EXPECTED_GOVERNANCE = {
     "documentation_owner": "honest-backtest",
     "upstream_documentation_owner": "trading-bot-v2",
@@ -27,6 +28,13 @@ PRIVATE_POINTER = re.compile(
 )
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
 SHA40 = re.compile(r"^[0-9a-f]{40}$")
+
+
+def canonical_text_sha256(path: Path) -> str:
+    """Hash UTF-8 text after normalizing checkout line endings to LF."""
+    text = path.read_bytes().decode("utf-8")
+    canonical = text.replace("\r\n", "\n").replace("\r", "\n")
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 
 def load_projection(root: Path) -> dict[str, Any]:
@@ -88,6 +96,8 @@ def validate(root: Path = ROOT, upstream_roadmap: Path | None = None) -> list[st
     else:
         if upstream.get("commit_sha") != EXPECTED_UPSTREAM_SHA:
             failures.append("upstream commit mismatch")
+        if upstream.get("hash_canonicalization") != EXPECTED_HASH_CANONICALIZATION:
+            failures.append("upstream hash canonicalization mismatch")
         if upstream.get("sha256") != EXPECTED_UPSTREAM_HASH:
             failures.append("upstream roadmap hash mismatch")
         if not SHA40.fullmatch(str(upstream.get("commit_sha", ""))):
@@ -96,8 +106,8 @@ def validate(root: Path = ROOT, upstream_roadmap: Path | None = None) -> list[st
             failures.append("upstream hash is not SHA-256")
         if upstream_roadmap is not None:
             try:
-                actual_hash = hashlib.sha256(upstream_roadmap.read_bytes()).hexdigest()
-            except OSError:
+                actual_hash = canonical_text_sha256(upstream_roadmap)
+            except (OSError, UnicodeDecodeError):
                 failures.append("upstream roadmap could not be read")
             else:
                 if actual_hash != upstream.get("sha256"):
@@ -171,8 +181,8 @@ def validate(root: Path = ROOT, upstream_roadmap: Path | None = None) -> list[st
         for line in path.read_text(encoding="utf-8").splitlines()
         if line.startswith("def test_")
     )
-    if test_count != 68:
-        failures.append(f"documented test count drifted: expected 68, found {test_count}")
+    if test_count != 70:
+        failures.append(f"documented test count drifted: expected 70, found {test_count}")
 
     return failures
 

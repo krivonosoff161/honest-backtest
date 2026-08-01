@@ -13,7 +13,8 @@
     "schema": "TradingPortfolioRoadmap.v1",
     "version": "2026.08.01",
     "commit_sha": "c20322f887977c5e3c3ec2c242ca560617d056fa",
-    "sha256": "29c479fc93d5324c40746359700935892488928e4cb5312556f27cc74639ac57"
+    "hash_canonicalization": "utf8_lf",
+    "sha256": "580814ae7aab611ab9e33253a0ffbc1d64a719ea5d2aed2e231fc41bb4760270"
   },
   "module": {
     "module_id": "honest_backtest_validation",
