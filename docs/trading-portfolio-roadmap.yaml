@@ -3,13 +3,17 @@
   "version": "2026.08.01",
   "status": "current",
   "verified_date": "2026-08-01",
+  "documentation_owner": "honest-backtest",
+  "upstream_documentation_owner": "trading-bot-v2",
+  "projection_role": "pinned_module_projection",
+  "portfolio_integrator": "krivonosoff161",
   "verified_against": "0f537a8fa0b80b17d100d38c0696f9a07d8e4ba6",
   "upstream": {
     "repository": "krivonosoff161/trading-bot-v2",
     "schema": "TradingPortfolioRoadmap.v1",
     "version": "2026.08.01",
     "commit_sha": "c20322f887977c5e3c3ec2c242ca560617d056fa",
-    "sha256": "9a16be5e6cc4a2c23c107579c60a1f89548bd55e5ed7619fdc1438c61eee3f64"
+    "sha256": "29c479fc93d5324c40746359700935892488928e4cb5312556f27cc74639ac57"
   },
   "module": {
     "module_id": "honest_backtest_validation",

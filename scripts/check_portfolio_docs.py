@@ -13,7 +13,13 @@ ROOT = Path(__file__).resolve().parents[1]
 PROJECTION = Path("docs/trading-portfolio-roadmap.yaml")
 EXPECTED_REPOSITORY_SHA = "0f537a8fa0b80b17d100d38c0696f9a07d8e4ba6"
 EXPECTED_UPSTREAM_SHA = "c20322f887977c5e3c3ec2c242ca560617d056fa"
-EXPECTED_UPSTREAM_HASH = "9a16be5e6cc4a2c23c107579c60a1f89548bd55e5ed7619fdc1438c61eee3f64"
+EXPECTED_UPSTREAM_HASH = "29c479fc93d5324c40746359700935892488928e4cb5312556f27cc74639ac57"
+EXPECTED_GOVERNANCE = {
+    "documentation_owner": "honest-backtest",
+    "upstream_documentation_owner": "trading-bot-v2",
+    "projection_role": "pinned_module_projection",
+    "portfolio_integrator": "krivonosoff161",
+}
 MARKDOWN_LINK = re.compile(r"(?<!!)\[[^\]]+\]\(([^)]+)\)")
 PRIVATE_POINTER = re.compile(
     r"(?i)(?:[a-z]:\\users\\|(?:^|[/\\])\.env(?:$|[/\\])|"
@@ -70,6 +76,9 @@ def validate(root: Path = ROOT, upstream_roadmap: Path | None = None) -> list[st
         failures.append("unexpected projection schema")
     if projection.get("status") != "current":
         failures.append("projection status must be current")
+    for field, expected in EXPECTED_GOVERNANCE.items():
+        if projection.get(field) != expected:
+            failures.append(f"projection governance field mismatch: {field}")
     if projection.get("verified_against") != EXPECTED_REPOSITORY_SHA:
         failures.append("projection repository SHA mismatch")
 

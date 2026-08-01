@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 from scripts.check_portfolio_docs import (
+    EXPECTED_GOVERNANCE,
     EXPECTED_REPOSITORY_SHA,
     EXPECTED_UPSTREAM_HASH,
     EXPECTED_UPSTREAM_SHA,
@@ -39,6 +40,7 @@ def _fixture_root(tmp_path: Path) -> Path:
         "version": "2026.08.01",
         "status": "current",
         "verified_date": "2026-08-01",
+        **EXPECTED_GOVERNANCE,
         "verified_against": EXPECTED_REPOSITORY_SHA,
         "upstream": {
             "repository": "example/trading-bot-v2",
@@ -88,6 +90,13 @@ def test_projection_cannot_grant_validator_authority(tmp_path: Path) -> None:
     projection["module"]["authority"] = "paper_only"  # type: ignore[index]
     _write_projection(root, projection)
     assert "validator module authority mismatch" in validate(root)
+
+    for field in EXPECTED_GOVERNANCE:
+        root = _fixture_root(tmp_path / field)
+        projection = _projection(root)
+        projection[field] = "synthetic-mismatch"
+        _write_projection(root, projection)
+        assert f"projection governance field mismatch: {field}" in validate(root)
 
 
 def test_projection_requires_existing_evidence(tmp_path: Path) -> None:
