@@ -1,10 +1,17 @@
 # Validation Bridge Contract
 
-Status: **REFERENCE CONTRACT**. Version: `1.0.0`.
+Status: **REFERENCE CONTRACT**. Upstream version: `1.3.0`.
 
-This document describes the public-safe boundary between a candidate-producing
-research workbench and the `backtest_sanity` validation methods. It does not
-ship an exchange integration, strategy edge, private candidate rows, or order
+- Canonical owner: `trading-bot-v2`
+- Validator-method owner: `honest-backtest`
+- Pinned upstream source: [`2eeb6a646040ea23cead64cb36c83de974adb2bd`](https://github.com/krivonosoff161/trading-bot-v2/blob/2eeb6a646040ea23cead64cb36c83de974adb2bd/docs/validation-bridge-contract.md)
+- Authority: `none`
+
+This is a deliberately bounded public projection of the canonical producer-side
+contract. `trading-bot-v2` owns candidate schemas, generation publication,
+paper lifecycle, and later delivery. `honest-backtest` owns the generic
+skeptical validation methods it exposes. This document does not ship an exchange
+integration, strategy edge, private candidate rows, runtime state, or order
 authority.
 
 ## Candidate Input
@@ -12,7 +19,8 @@ authority.
 A candidate must have a stable candidate ID, source-run provenance, symbol and
 timeframe identifiers, strategy identifier, declared parameters/filters, fee
 and slippage assumptions, deterministic metrics, simulated trade returns, data
-window metadata, and a schema version.
+window metadata, a schema version, and the exact generation/evidence identities
+required by the canonical source.
 
 The producer must record the complete trial set or trial count used to select
 the candidate. Validation cannot honestly correct multiple testing if it only
@@ -28,10 +36,11 @@ The validator returns a structured report containing:
 - a hard status;
 - contract version and timestamp.
 
-The strongest positive status is `PAPER_FORWARD_READY`. It means the candidate
-may be observed in a paper/forward process under the producer's own controls.
-It does not mean profitable, approved, live-ready, or authorized to place an
-order.
+The strongest positive status is `PAPER_FORWARD_READY`. It means only that the
+candidate was **not rejected by the defined checks** and may be considered for a
+separately controlled paper/forward observation path under the producer's own
+controls. It does not mean profitable, approved, live-ready, or authorized to
+place an order.
 
 ## Status Vocabulary
 
@@ -41,8 +50,9 @@ FAILED_OOS | FAILED_DATA_QUALITY | REGIME_ONLY | NEEDS_MORE_DATA
 PAPER_FORWARD_READY
 ```
 
-Unknown schema versions or unrecognized statuses must be rejected by an
-integration, not silently interpreted as a pass.
+Unknown schema versions, unrecognized statuses, missing generation bindings, or
+incomplete/tampered evidence must be rejected by an integration, not silently
+interpreted as a pass.
 
 ## Forward Evidence
 
@@ -56,3 +66,11 @@ their own hash, signing, locking, or immutable-store controls.
 No candidate, report, forward row, LLM proposal, or bridge status authorizes
 execution. Live order policy belongs outside this repository and outside this
 contract.
+
+## Projection Update Rule
+
+`trading-portfolio-roadmap.yaml` records the upstream schema version, exact
+commit, and canonical UTF-8/LF SHA-256. Any change to those fields needs an
+explicit projection update. CI verifies both the content hash and the
+checked-out upstream Git HEAD; a matching digest does not prove runtime
+correctness or statistical quality.

@@ -4,15 +4,13 @@ import hashlib
 import json
 from pathlib import Path
 
-from scripts.check_portfolio_docs import (
-    EXPECTED_GOVERNANCE,
-    EXPECTED_HASH_CANONICALIZATION,
-    EXPECTED_REPOSITORY_SHA,
-    EXPECTED_UPSTREAM_HASH,
-    EXPECTED_UPSTREAM_SHA,
-    canonical_text_sha256,
-    validate,
-)
+import scripts.check_portfolio_docs as docs_guard
+from scripts.check_portfolio_docs import EXPECTED_GOVERNANCE, canonical_text_sha256, validate
+
+
+SYNTHETIC_REPOSITORY_SHA = "1" * 40
+SYNTHETIC_UPSTREAM_SHA = "2" * 40
+SYNTHETIC_UPSTREAM_HASH = "3" * 64
 
 
 def _fixture_root(tmp_path: Path) -> Path:
@@ -25,12 +23,15 @@ def _fixture_root(tmp_path: Path) -> Path:
             "",
             "Status: **CURRENT**",
             "",
-            "- Verified: 2026-08-01",
-            f"- Verified against: `{EXPECTED_REPOSITORY_SHA}`",
+            "- Verified: 2026-08-29",
+            f"- Verified against: `{SYNTHETIC_REPOSITORY_SHA}`",
         ]
     )
     (tmp_path / "README.md").write_text(current, encoding="utf-8")
     (tmp_path / "docs/trading-portfolio-roadmap.md").write_text(current, encoding="utf-8")
+    (tmp_path / "docs/validation-bridge-contract.md").write_text(
+        f"# Bridge\n\nPinned upstream: `{SYNTHETIC_UPSTREAM_SHA}`\n", encoding="utf-8"
+    )
     (tmp_path / "docs/history/strategy-lab-roadmap.md").write_text(
         "# History\n\nStatus: **HISTORICAL / SUPERSEDED**\n", encoding="utf-8"
     )
@@ -40,18 +41,18 @@ def _fixture_root(tmp_path: Path) -> Path:
     )
     projection = {
         "schema": "TradingPortfolioRoadmapProjection.v1",
-        "version": "2026.08.01",
+        "version": "2026.08.29",
         "status": "current",
-        "verified_date": "2026-08-01",
+        "verified_date": "2026-08-29",
         **EXPECTED_GOVERNANCE,
-        "verified_against": EXPECTED_REPOSITORY_SHA,
+        "verified_against": SYNTHETIC_REPOSITORY_SHA,
         "upstream": {
-            "repository": "example/trading-bot-v2",
+            "repository": "krivonosoff161/trading-bot-v2",
             "schema": "TradingPortfolioRoadmap.v1",
-            "version": "2026.08.01",
-            "commit_sha": EXPECTED_UPSTREAM_SHA,
-            "hash_canonicalization": EXPECTED_HASH_CANONICALIZATION,
-            "sha256": EXPECTED_UPSTREAM_HASH,
+            "version": "2026.08.29",
+            "commit_sha": SYNTHETIC_UPSTREAM_SHA,
+            "hash_canonicalization": "utf8_lf",
+            "sha256": SYNTHETIC_UPSTREAM_HASH,
         },
         "module": {
             "module_id": "honest_backtest_validation",
@@ -66,6 +67,7 @@ def _fixture_root(tmp_path: Path) -> Path:
             "public_private_boundary": "synthetic only",
         },
         "current_documents": ["README.md", "docs/trading-portfolio-roadmap.md"],
+        "documented_test_count": 70,
         "absolute_boundaries": ["no execution"],
     }
     (tmp_path / "docs/trading-portfolio-roadmap.yaml").write_text(
@@ -111,6 +113,40 @@ def test_projection_requires_existing_evidence(tmp_path: Path) -> None:
     assert "validator evidence path is missing" in validate(root)
 
 
+def test_projection_requires_canonical_upstream_identity(tmp_path: Path) -> None:
+    root = _fixture_root(tmp_path)
+    projection = _projection(root)
+    projection["upstream"]["repository"] = "synthetic/other"  # type: ignore[index]
+    _write_projection(root, projection)
+    assert "upstream metadata mismatch: repository" in validate(root)
+
+
+def test_validation_bridge_must_carry_the_pinned_upstream_commit(tmp_path: Path) -> None:
+    root = _fixture_root(tmp_path)
+    (root / "docs/validation-bridge-contract.md").write_text("# unpinned\n", encoding="utf-8")
+    assert "validation bridge does not carry the pinned upstream commit" in validate(root)
+
+
+def test_documentation_baseline_rejects_unreviewed_implementation_changes(
+    tmp_path: Path, monkeypatch
+) -> None:
+    root = _fixture_root(tmp_path)
+
+    def fake_git_output(path: Path, *args: str) -> str | None:
+        if args == ("rev-parse", "--is-inside-work-tree"):
+            return "true"
+        if args[:3] == ("rev-parse", "--verify", f"{SYNTHETIC_REPOSITORY_SHA}^{{commit}}"):
+            return SYNTHETIC_REPOSITORY_SHA
+        if args == ("merge-base", "--is-ancestor", SYNTHETIC_REPOSITORY_SHA, "HEAD"):
+            return ""
+        if args == ("diff", "--name-only", f"{SYNTHETIC_REPOSITORY_SHA}..HEAD"):
+            return "src/backtest_sanity/new_implementation.py\n"
+        return None
+
+    monkeypatch.setattr(docs_guard, "_git_output", fake_git_output)
+    assert "documentation baseline has unreviewed implementation changes" in validate(root)
+
+
 def test_private_pointer_is_rejected_without_echoing_value(tmp_path: Path) -> None:
     root = _fixture_root(tmp_path)
     projection = _projection(root)
@@ -139,6 +175,27 @@ def test_direct_upstream_hash_mismatch_is_rejected(tmp_path: Path) -> None:
     upstream = tmp_path / "upstream.yaml"
     upstream.write_text("synthetic different roadmap\n", encoding="utf-8")
     assert "upstream roadmap content hash mismatch" in validate(root, upstream)
+
+
+def test_checked_out_upstream_head_mismatch_is_rejected(
+    tmp_path: Path, monkeypatch
+) -> None:
+    root = _fixture_root(tmp_path / "repo")
+    upstream = tmp_path / "upstream.yaml"
+    upstream.write_text("synthetic upstream roadmap\n", encoding="utf-8")
+    projection = _projection(root)
+    projection["upstream"]["sha256"] = canonical_text_sha256(upstream)  # type: ignore[index]
+    _write_projection(root, projection)
+
+    def fake_git_output(path: Path, *args: str) -> str | None:
+        if path == upstream.parent and args == ("rev-parse", "--show-toplevel"):
+            return str(upstream.parent)
+        if path == upstream.parent and args == ("rev-parse", "HEAD"):
+            return "f" * 40
+        return None
+
+    monkeypatch.setattr(docs_guard, "_git_output", fake_git_output)
+    assert "upstream roadmap HEAD does not match pinned commit" in validate(root, upstream)
 
 
 def test_upstream_hash_is_portable_across_lf_and_crlf(tmp_path: Path) -> None:

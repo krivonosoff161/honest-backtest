@@ -2,10 +2,10 @@
 
 Status: **CURRENT**
 
-- Verified: 2026-08-01
-- Verified against: `0f537a8fa0b80b17d100d38c0696f9a07d8e4ba6`
+- Verified: 2026-08-29
+- Verified against: `a23588c8696989cba0e0283454cfd175a9ab1e03`
 - Scope: current public capabilities and evidence ceilings
-- Evidence: `src/backtest_sanity`, `src/strategy_lab`, and 70 collected test functions
+- Evidence: `src/backtest_sanity`, `src/strategy_lab`, and 74 collected test functions
 - Residual risks: deterministic synthetic checks do not prove performance on
   dependent market data or untouched future observations.
 - Next gate: keep the validation bridge and Trading Portfolio projection aligned

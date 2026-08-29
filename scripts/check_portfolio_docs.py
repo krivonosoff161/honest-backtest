@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import re
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -11,15 +12,16 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 PROJECTION = Path("docs/trading-portfolio-roadmap.yaml")
-EXPECTED_REPOSITORY_SHA = "0f537a8fa0b80b17d100d38c0696f9a07d8e4ba6"
-EXPECTED_UPSTREAM_SHA = "c20322f887977c5e3c3ec2c242ca560617d056fa"
-EXPECTED_UPSTREAM_HASH = "580814ae7aab611ab9e33253a0ffbc1d64a719ea5d2aed2e231fc41bb4760270"
 EXPECTED_HASH_CANONICALIZATION = "utf8_lf"
 EXPECTED_GOVERNANCE = {
     "documentation_owner": "honest-backtest",
     "upstream_documentation_owner": "trading-bot-v2",
     "projection_role": "pinned_module_projection",
     "portfolio_integrator": "krivonosoff161",
+}
+EXPECTED_UPSTREAM_METADATA = {
+    "repository": "krivonosoff161/trading-bot-v2",
+    "schema": "TradingPortfolioRoadmap.v1",
 }
 MARKDOWN_LINK = re.compile(r"(?<!!)\[[^\]]+\]\(([^)]+)\)")
 PRIVATE_POINTER = re.compile(
@@ -28,6 +30,16 @@ PRIVATE_POINTER = re.compile(
 )
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
 SHA40 = re.compile(r"^[0-9a-f]{40}$")
+CURRENT_DOCUMENTS_CONTROLLED_PATHS = {
+    "AGENTS.md",
+    "ARCHITECTURE.md",
+    "CURRENT_STATE.md",
+    "README.md",
+    "ROADMAP.md",
+    ".github/workflows/tests.yml",
+    "scripts/check_portfolio_docs.py",
+    "tests/test_portfolio_docs.py",
+}
 
 
 def canonical_text_sha256(path: Path) -> str:
@@ -42,6 +54,60 @@ def load_projection(root: Path) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise ValueError("portfolio projection must be an object")
     return value
+
+
+def _git_output(root: Path, *args: str) -> str | None:
+    """Return a bounded Git answer, or None when the path is not a Git checkout."""
+    try:
+        completed = subprocess.run(
+            ["git", *args],
+            cwd=root,
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    if completed.returncode != 0:
+        return None
+    return completed.stdout.strip()
+
+
+def _is_documentation_controlled_path(path: str) -> bool:
+    return path in CURRENT_DOCUMENTS_CONTROLLED_PATHS or path.startswith("docs/")
+
+
+def _uncontrolled_implementation_paths(root: Path, baseline: str) -> list[str] | None:
+    """Find changes after the documentation baseline that need a new review.
+
+    A current document records a preceding implementation baseline; it cannot
+    silently certify later implementation edits in the same checkout. Fixtures
+    without Git metadata return None because their projection tests verify
+    structure only.
+    """
+    if _git_output(root, "rev-parse", "--is-inside-work-tree") != "true":
+        return None
+    if _git_output(root, "rev-parse", "--verify", f"{baseline}^{{commit}}") is None:
+        return ["<unknown-baseline>"]
+    if _git_output(root, "merge-base", "--is-ancestor", baseline, "HEAD") is None:
+        return ["<non-ancestor-baseline>"]
+    changed = _git_output(root, "diff", "--name-only", f"{baseline}..HEAD")
+    if changed is None:
+        return ["<diff-unavailable>"]
+    return [path for path in changed.splitlines() if not _is_documentation_controlled_path(path)]
+
+
+def _validate_upstream_head(
+    upstream_roadmap: Path, expected_commit: str, failures: list[str]
+) -> None:
+    """Compare a supplied public source tree's exact HEAD with the pinned SHA."""
+    upstream_root = _git_output(upstream_roadmap.parent, "rev-parse", "--show-toplevel")
+    if upstream_root is None:
+        return
+    upstream_head = _git_output(Path(upstream_root), "rev-parse", "HEAD")
+    if upstream_head != expected_commit:
+        failures.append("upstream roadmap HEAD does not match pinned commit")
 
 
 def _all_strings(value: Any) -> list[str]:
@@ -87,19 +153,25 @@ def validate(root: Path = ROOT, upstream_roadmap: Path | None = None) -> list[st
     for field, expected in EXPECTED_GOVERNANCE.items():
         if projection.get(field) != expected:
             failures.append(f"projection governance field mismatch: {field}")
-    if projection.get("verified_against") != EXPECTED_REPOSITORY_SHA:
-        failures.append("projection repository SHA mismatch")
+    verified_against = str(projection.get("verified_against", ""))
+    if not SHA40.fullmatch(verified_against):
+        failures.append("projection repository baseline is not a full SHA")
+    else:
+        uncontrolled = _uncontrolled_implementation_paths(root, verified_against)
+        if uncontrolled:
+            failures.append("documentation baseline has unreviewed implementation changes")
 
     upstream = projection.get("upstream")
     if not isinstance(upstream, dict):
         failures.append("upstream projection metadata missing")
     else:
-        if upstream.get("commit_sha") != EXPECTED_UPSTREAM_SHA:
-            failures.append("upstream commit mismatch")
+        for field, expected in EXPECTED_UPSTREAM_METADATA.items():
+            if upstream.get(field) != expected:
+                failures.append(f"upstream metadata mismatch: {field}")
+        if not isinstance(upstream.get("version"), str) or not upstream["version"]:
+            failures.append("upstream version is missing or invalid")
         if upstream.get("hash_canonicalization") != EXPECTED_HASH_CANONICALIZATION:
             failures.append("upstream hash canonicalization mismatch")
-        if upstream.get("sha256") != EXPECTED_UPSTREAM_HASH:
-            failures.append("upstream roadmap hash mismatch")
         if not SHA40.fullmatch(str(upstream.get("commit_sha", ""))):
             failures.append("upstream commit is not a full SHA")
         if not SHA256.fullmatch(str(upstream.get("sha256", ""))):
@@ -112,6 +184,16 @@ def validate(root: Path = ROOT, upstream_roadmap: Path | None = None) -> list[st
             else:
                 if actual_hash != upstream.get("sha256"):
                     failures.append("upstream roadmap content hash mismatch")
+                else:
+                    _validate_upstream_head(upstream_roadmap, str(upstream["commit_sha"]), failures)
+
+        bridge = root / "docs" / "validation-bridge-contract.md"
+        if not bridge.is_file():
+            failures.append("validation bridge projection is missing")
+        elif str(upstream.get("commit_sha", "")) not in bridge.read_text(
+            encoding="utf-8", errors="replace"
+        ):
+            failures.append("validation bridge does not carry the pinned upstream commit")
 
     module = projection.get("module")
     if not isinstance(module, dict):
@@ -153,7 +235,11 @@ def validate(root: Path = ROOT, upstream_roadmap: Path | None = None) -> list[st
                 failures.append(f"current document missing: {raw_path}")
                 continue
             text = path.read_text(encoding="utf-8", errors="replace")
-            for marker in ("Status: **CURRENT**", "Verified: 2026-08-01", EXPECTED_REPOSITORY_SHA):
+            for marker in (
+                "Status: **CURRENT**",
+                f"Verified: {projection.get('verified_date')}",
+                verified_against,
+            ):
                 if marker not in text:
                     failures.append(f"current document lacks control metadata: {raw_path}")
                     break
@@ -181,8 +267,13 @@ def validate(root: Path = ROOT, upstream_roadmap: Path | None = None) -> list[st
         for line in path.read_text(encoding="utf-8").splitlines()
         if line.startswith("def test_")
     )
-    if test_count != 70:
-        failures.append(f"documented test count drifted: expected 70, found {test_count}")
+    documented_test_count = projection.get("documented_test_count")
+    if not isinstance(documented_test_count, int) or documented_test_count < 1:
+        failures.append("projection documented test count is missing or invalid")
+    elif test_count != documented_test_count:
+        failures.append(
+            f"documented test count drifted: expected {documented_test_count}, found {test_count}"
+        )
 
     return failures
 

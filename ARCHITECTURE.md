@@ -2,8 +2,8 @@
 
 Status: **CURRENT**
 
-- Verified: 2026-08-01
-- Verified against: `0f537a8fa0b80b17d100d38c0696f9a07d8e4ba6`
+- Verified: 2026-08-29
+- Verified against: `a23588c8696989cba0e0283454cfd175a9ab1e03`
 - Scope: repository ownership, stable and experimental surfaces, and integration boundaries
 - Evidence: `src/backtest_sanity/__init__.py`, `src/strategy_lab/cli.py`, and `tests/`
 - Residual risks: dynamic producer behavior remains outside this repository.
