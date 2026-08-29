@@ -4,7 +4,7 @@ Status: **REFERENCE CONTRACT**. Upstream version: `1.3.0`.
 
 - Canonical owner: `trading-bot-v2`
 - Validator-method owner: `honest-backtest`
-- Pinned upstream source: [`2eeb6a646040ea23cead64cb36c83de974adb2bd`](https://github.com/krivonosoff161/trading-bot-v2/blob/2eeb6a646040ea23cead64cb36c83de974adb2bd/docs/validation-bridge-contract.md)
+- Pinned upstream source: [`5e5966fe143de26ac975fd86efc473345eb0dbba`](https://github.com/krivonosoff161/trading-bot-v2/blob/5e5966fe143de26ac975fd86efc473345eb0dbba/docs/validation-bridge-contract.md)
 - Authority: `none`
 
 This is a deliberately bounded public projection of the canonical producer-side

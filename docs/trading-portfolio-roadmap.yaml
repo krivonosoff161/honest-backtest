@@ -11,10 +11,10 @@
   "upstream": {
     "repository": "krivonosoff161/trading-bot-v2",
     "schema": "TradingPortfolioRoadmap.v1",
-    "version": "2026.08.27",
-    "commit_sha": "2eeb6a646040ea23cead64cb36c83de974adb2bd",
+    "version": "2026.08.29",
+    "commit_sha": "5e5966fe143de26ac975fd86efc473345eb0dbba",
     "hash_canonicalization": "utf8_lf",
-    "sha256": "5ba82da4ae570677575ff3604e6498bf46bea1da5740b10c8b75fce6dad26122"
+    "sha256": "5b206b98b8f00bab37a51f826adb15754560c45cd372cdccaacb3be2925a08f9"
   },
   "module": {
     "module_id": "honest_backtest_validation",
