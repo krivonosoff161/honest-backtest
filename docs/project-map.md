@@ -3,7 +3,7 @@
 Status: **CURRENT**
 
 - Verified: 2026-08-29
-- Verified against: `a23588c8696989cba0e0283454cfd175a9ab1e03`
+- Verified against: `9188dadc418de36b73c1c4577763b6f0ad3b5e2f`
 - Scope: modules, ownership, stable/experimental surfaces, and repository boundary
 - Evidence: `src/`, `tests/`, and [Trading Portfolio projection](trading-portfolio-roadmap.md)
 - Residual risks: line counts are orientation only and dynamic consumers live outside this repository.
@@ -76,7 +76,7 @@ except `ForwardLog`, no global state, numpy is the only dependency.
 
 ## What exists today
 
-- All seven layers implemented, with 74 collected test functions and nine worked examples
+- All seven layers implemented, with 75 collected test functions and nine worked examples
   (`examples/01..09`, all on synthetic data, no keys).
 - The named overfitting-statistics exports live in `overfit.py` and are part of
   the public API.

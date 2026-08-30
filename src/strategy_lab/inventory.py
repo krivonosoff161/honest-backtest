@@ -9,7 +9,7 @@ import json
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Iterable, Optional, TextIO
+from typing import Any, Iterable, Optional, Sequence, TextIO
 
 from .models import FileSummary, InventoryConfig, InventoryResult
 from .paths import ensure_output_layout, relative_to_or_name
@@ -614,7 +614,7 @@ def _date_from_stem(path: Path) -> str:
     return stem
 
 
-def _schema_hash(header: list[str]) -> str:
+def _schema_hash(header: Sequence[str]) -> str:
     return hashlib.sha256(",".join(header).encode("utf-8")).hexdigest()[:16] if header else ""
 
 

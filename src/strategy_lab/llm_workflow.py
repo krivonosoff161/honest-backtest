@@ -203,7 +203,7 @@ def _read_report_excerpt(report_path: Path) -> str:
     if not report_path.exists():
         return ""
     lines = report_path.read_text(encoding="utf-8", errors="replace").splitlines()
-    filtered = []
+    filtered: list[str] = []
     for line in lines:
         if line.startswith("|") and filtered.count(line) > 1:
             continue

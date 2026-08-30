@@ -3,7 +3,7 @@
 Status: **CURRENT**
 
 - Verified: 2026-08-29
-- Verified against: `a23588c8696989cba0e0283454cfd175a9ab1e03`
+- Verified against: `9188dadc418de36b73c1c4577763b6f0ad3b5e2f`
 - Scope: reading order and stable/experimental documentation ownership
 - Evidence: [documentation contract validator](../scripts/check_portfolio_docs.py)
 - Residual risks: experimental schemas may change before a stable release.

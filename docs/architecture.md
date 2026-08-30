@@ -3,7 +3,7 @@
 Status: **CURRENT**
 
 - Verified: 2026-08-29
-- Verified against: `a23588c8696989cba0e0283454cfd175a9ab1e03`
+- Verified against: `9188dadc418de36b73c1c4577763b6f0ad3b5e2f`
 - Scope: statistical validation layers and their assumptions
 - Evidence: `src/backtest_sanity` and focused tests
 - Residual risks: several methods assume independent observations.

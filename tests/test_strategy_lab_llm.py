@@ -158,6 +158,16 @@ def test_llm_cli_doctor_reports_local_alibaba_setup(monkeypatch, capsys):
     assert "dashscope-us.aliyuncs.com" in output
 
 
+def test_llm_cli_doctor_never_renders_credential_preview(monkeypatch, capsys):
+    monkeypatch.setenv("DASHSCOPE_API_KEY", "synthetic-test-credential")
+
+    assert main(["llm-doctor"]) == 0
+
+    output = capsys.readouterr().out
+    assert "api key preview:" not in output
+    assert "synthetic-test-credential" not in output
+
+
 def test_alibaba_environment_report_redacts_key(monkeypatch):
     monkeypatch.setenv("DASHSCOPE_API_KEY", "sk-1234567890abcdef")
     report = alibaba_environment_report()
