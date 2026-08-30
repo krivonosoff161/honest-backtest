@@ -78,6 +78,37 @@ def _is_documentation_controlled_path(path: str) -> bool:
     return path in CURRENT_DOCUMENTS_CONTROLLED_PATHS or path.startswith("docs/")
 
 
+def _implementation_snapshot_sha256(root: Path) -> str | None:
+    """Hash the exact non-documentation Git tree currently under review.
+
+    The projection's commit baseline remains useful for ordinary history, but a
+    reviewed PR may be squash-merged and therefore receive a new commit object.
+    Hashing the path, mode, object type, and blob identity keeps the review
+    binding intact without treating a non-ancestor commit as a failure merely
+    because GitHub rewrote the commit graph.
+    """
+    tree = _git_output(root, "ls-tree", "-r", "--full-tree", "HEAD")
+    if tree is None:
+        return None
+
+    digest = hashlib.sha256()
+    for line in tree.splitlines():
+        metadata, separator, path = line.partition("\t")
+        fields = metadata.split()
+        if not separator or len(fields) != 3 or _is_documentation_controlled_path(path):
+            continue
+        mode, object_type, object_id = fields
+        digest.update(path.encode("utf-8"))
+        digest.update(b"\0")
+        digest.update(mode.encode("ascii"))
+        digest.update(b"\0")
+        digest.update(object_type.encode("ascii"))
+        digest.update(b"\0")
+        digest.update(object_id.encode("ascii"))
+        digest.update(b"\0")
+    return digest.hexdigest()
+
+
 def _uncontrolled_implementation_paths(root: Path, baseline: str) -> list[str] | None:
     """Find changes after the documentation baseline that need a new review.
 
@@ -157,8 +188,19 @@ def validate(root: Path = ROOT, upstream_roadmap: Path | None = None) -> list[st
     if not SHA40.fullmatch(verified_against):
         failures.append("projection repository baseline is not a full SHA")
     else:
+        expected_snapshot = str(projection.get("implementation_snapshot_sha256", ""))
         uncontrolled = _uncontrolled_implementation_paths(root, verified_against)
-        if uncontrolled:
+        actual_snapshot = _implementation_snapshot_sha256(root)
+        snapshot_matches = uncontrolled is None
+        if not SHA256.fullmatch(expected_snapshot):
+            failures.append("projection implementation snapshot is not a SHA-256")
+        elif uncontrolled is not None and actual_snapshot is None:
+            failures.append("projection implementation snapshot is unavailable")
+        elif actual_snapshot is not None:
+            snapshot_matches = actual_snapshot == expected_snapshot
+            if not snapshot_matches:
+                failures.append("projection implementation snapshot does not match checkout")
+        if uncontrolled and not snapshot_matches:
             failures.append("documentation baseline has unreviewed implementation changes")
 
     upstream = projection.get("upstream")

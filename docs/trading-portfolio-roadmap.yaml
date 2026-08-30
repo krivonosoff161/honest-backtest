@@ -2,12 +2,13 @@
   "schema": "TradingPortfolioRoadmapProjection.v1",
   "version": "2026.08.29",
   "status": "current",
-  "verified_date": "2026-08-29",
+  "verified_date": "2026-08-30",
   "documentation_owner": "honest-backtest",
   "upstream_documentation_owner": "trading-bot-v2",
   "projection_role": "pinned_module_projection",
   "portfolio_integrator": "krivonosoff161",
-  "verified_against": "9188dadc418de36b73c1c4577763b6f0ad3b5e2f",
+  "verified_against": "a392333caf0d74d39fbb502b3aef98a0e51b5b9d",
+  "implementation_snapshot_sha256": "6b53b7d1f7a5ff6fc10f007e775281180ccf5926cbe2367af515159ae0a912eb",
   "upstream": {
     "repository": "krivonosoff161/trading-bot-v2",
     "schema": "TradingPortfolioRoadmap.v1",
@@ -43,7 +44,7 @@
     "docs/project-map.md",
     "docs/trading-portfolio-roadmap.md"
   ],
-  "documented_test_count": 75,
+  "documented_test_count": 77,
   "absolute_boundaries": [
     "no trading authority",
     "no private strategy or runtime data",
