@@ -43,7 +43,7 @@
     "docs/project-map.md",
     "docs/trading-portfolio-roadmap.md"
   ],
-  "documented_test_count": 74,
+  "documented_test_count": 75,
   "absolute_boundaries": [
     "no trading authority",
     "no private strategy or runtime data",

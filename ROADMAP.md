@@ -13,7 +13,7 @@ Status: **CURRENT**
 
 - Stable seven-layer deterministic validation toolkit and named overfitting
   statistics.
-- Nine synthetic worked examples and 74 test functions on the review tree,
+- Nine synthetic worked examples and 75 test functions on the review tree,
   including the documentation contract tests.
 - Public-safe validation bridge with paper-only positive ceiling.
 - Experimental Strategy Lab inventory, registry, queue, advisory budget, and

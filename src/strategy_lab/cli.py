@@ -51,7 +51,7 @@ def main(argv: Optional[list[str]] = None) -> int:
 
     args = parser.parse_args(argv)
     if args.command == "inventory":
-        result = run_inventory(
+        inventory_result = run_inventory(
             InventoryConfig(
                 source_root=args.source_root,
                 tick_root=args.tick_root,
@@ -59,34 +59,34 @@ def main(argv: Optional[list[str]] = None) -> int:
                 run_id=args.run_id,
             )
         )
-        print(f"inventory run: {result.run_id}")
-        print(f"manifest: {result.manifest_path}")
-        print(f"report: {result.report_path}")
+        print(f"inventory run: {inventory_result.run_id}")
+        print(f"manifest: {inventory_result.manifest_path}")
+        print(f"report: {inventory_result.report_path}")
         return 0
     if args.command == "registry-init":
-        result = initialize_registry(
+        registry_result = initialize_registry(
             RegistryConfig(
                 out_dir=args.out_dir,
                 run_id=args.run_id,
             )
         )
-        print(f"registry metadata: {result['metadata_path']}")
-        print(f"experiment queue: {result['queue_path']}")
+        print(f"registry metadata: {registry_result['metadata_path']}")
+        print(f"experiment queue: {registry_result['queue_path']}")
         return 0
     if args.command == "registry-add":
-        result = append_registry_entry(
+        registry_write_result = append_registry_entry(
             args.entry,
             RegistryConfig(
                 out_dir=args.out_dir,
                 run_id=args.run_id,
             ),
         )
-        print(f"registry record: {result.record_id}")
-        print(f"record: {result.record_path}")
-        print(f"index: {result.index_path}")
+        print(f"registry record: {registry_write_result.record_id}")
+        print(f"record: {registry_write_result.record_path}")
+        print(f"index: {registry_write_result.index_path}")
         return 0
     if args.command == "queue-plan":
-        result = queue_experiment_plan(
+        queue_result = queue_experiment_plan(
             args.plan,
             ExperimentQueueConfig(
                 out_dir=args.out_dir,
@@ -94,22 +94,20 @@ def main(argv: Optional[list[str]] = None) -> int:
                 run_id=args.run_id,
             ),
         )
-        print(f"experiment queued: {result.experiment_id}")
-        print(f"plan: {result.queue_path}")
-        print(f"index: {result.index_path}")
+        print(f"experiment queued: {queue_result.experiment_id}")
+        print(f"plan: {queue_result.queue_path}")
+        print(f"index: {queue_result.index_path}")
         return 0
     if args.command == "llm-doctor":
-        result = alibaba_environment_report(base_url=args.base_url, api_key_env=args.api_key_env)
-        print(f"provider: {result['provider']}")
-        print(f"api key env: {result['api_key_env']}")
-        print(f"api key present: {result['api_key_present']}")
-        if result["api_key_preview"]:
-            print(f"api key preview: {result['api_key_preview']}")
-        print(f"live switch enabled: {result['live_switch_enabled']}")
-        print(f"region: {result['region']}")
-        print(f"base url: {result['base_url']}")
-        print(f"chat completions url: {result['chat_completions_url']}")
-        print(f"known regions: {', '.join(result['known_regions'])}")
+        doctor_result = alibaba_environment_report(base_url=args.base_url, api_key_env=args.api_key_env)
+        print(f"provider: {doctor_result['provider']}")
+        print(f"api key env: {doctor_result['api_key_env']}")
+        print(f"api key present: {doctor_result['api_key_present']}")
+        print(f"live switch enabled: {doctor_result['live_switch_enabled']}")
+        print(f"region: {doctor_result['region']}")
+        print(f"base url: {doctor_result['base_url']}")
+        print(f"chat completions url: {doctor_result['chat_completions_url']}")
+        print(f"known regions: {', '.join(doctor_result['known_regions'])}")
         return 0
     if args.command == "llm-estimate":
         estimate_result = estimate_llm_plan(
@@ -124,17 +122,17 @@ def main(argv: Optional[list[str]] = None) -> int:
         print(f"run cap USD: {estimate_result['run_usd_cap']:.6f}")
         return 0
     if args.command == "llm-plan":
-        result = run_llm_plan(
+        plan_result = run_llm_plan(
             args.inventory_latest,
             _llm_config_from_args(args, live=args.live),
         )
-        print(f"llm run: {result.run_id}")
-        print(f"live: {result.live}")
-        print(f"estimated USD: {result.estimated_usd:.6f}")
-        print(f"request: {result.request_path}")
-        print(f"response: {result.response_path}")
-        print(f"proposal: {result.proposal_path}")
-        print(f"cost ledger: {result.cost_path}")
+        print(f"llm run: {plan_result.run_id}")
+        print(f"live: {plan_result.live}")
+        print(f"estimated USD: {plan_result.estimated_usd:.6f}")
+        print(f"request: {plan_result.request_path}")
+        print(f"response: {plan_result.response_path}")
+        print(f"proposal: {plan_result.proposal_path}")
+        print(f"cost ledger: {plan_result.cost_path}")
         return 0
     parser.error(f"unknown command: {args.command}")
     return 2
