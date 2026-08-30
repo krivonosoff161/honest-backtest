@@ -2,10 +2,10 @@
 
 Status: **CURRENT**
 
-- Verified: 2026-08-01
-- Verified against: `0f537a8fa0b80b17d100d38c0696f9a07d8e4ba6`
+- Verified: 2026-08-29
+- Verified against: `a23588c8696989cba0e0283454cfd175a9ab1e03`
 - Scope: public entry point, stable validator, and experimental research boundary
-- Evidence: 70 collected test functions, including the documentation contract,
+- Evidence: 74 collected test functions, including the documentation contract,
   and the exact source modules linked below
 - Residual risks: synthetic deterministic evidence cannot prove a market edge.
 - Next gate: keep this page aligned with the machine portfolio projection.
@@ -54,10 +54,12 @@ This repo does not contain private strategy logic, broker integration, exchange
 keys, or a promise of profitability. It is the validator you put between
 "interesting idea" and "maybe worth paper tracking."
 
-Portfolio-level documentation authority and public/private storage rules live in
-the [Documentation Contract](https://github.com/krivonosoff161/krivonosoff161/blob/main/docs/documentation-contract.md).
-This repository owns validation methods and synthetic examples; it must not
-publish private trading edge, live parameters, or candidate rankings.
+The canonical producer repository is the sole factual owner of the Trading
+Portfolio, as recorded in the [pinned machine projection](docs/trading-portfolio-roadmap.yaml).
+This repository owns only independent validation methods and that public
+projection; `krivonosoff161` is a post-merge Portfolio Integrator, not a
+competing documentation authority. This repository must not publish private
+trading edge, live parameters, or candidate rankings.
 
 ---
 

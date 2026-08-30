@@ -2,8 +2,8 @@
 
 Status: **CURRENT**
 
-- Verified: 2026-08-01
-- Verified against: `0f537a8fa0b80b17d100d38c0696f9a07d8e4ba6`
+- Verified: 2026-08-29
+- Verified against: `a23588c8696989cba0e0283454cfd175a9ab1e03`
 - Scope: modules, ownership, stable/experimental surfaces, and repository boundary
 - Evidence: `src/`, `tests/`, and [Trading Portfolio projection](trading-portfolio-roadmap.md)
 - Residual risks: line counts are orientation only and dynamic consumers live outside this repository.
@@ -38,10 +38,11 @@ AI-generated or human-generated trading ideas before they become operational
 habits. It does not ship private strategies, real market datasets, broker
 connectors, order execution, or a profitability claim.
 
-Portfolio-level documentation authority and public/private storage rules live in
-the [Documentation Contract](https://github.com/krivonosoff161/krivonosoff161/blob/main/docs/documentation-contract.md).
-This repository owns the validation layer, not private strategy discovery or
-live execution.
+The canonical producer repository owns the factual Trading Portfolio and its
+roadmap. This repository owns the validation layer and a pinned public
+projection only; it does not own private strategy discovery, live execution,
+or Portfolio claims. The `krivonosoff161` profile may integrate a sanitized
+post-merge manifest, but is not an independent documentation authority.
 
 ## Mental model
 
@@ -75,7 +76,7 @@ except `ForwardLog`, no global state, numpy is the only dependency.
 
 ## What exists today
 
-- All seven layers implemented, with 70 collected test functions and nine worked examples
+- All seven layers implemented, with 74 collected test functions and nine worked examples
   (`examples/01..09`, all on synthetic data, no keys).
 - The named overfitting-statistics exports live in `overfit.py` and are part of
   the public API.

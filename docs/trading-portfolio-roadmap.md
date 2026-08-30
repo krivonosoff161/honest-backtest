@@ -2,8 +2,8 @@
 
 Status: **CURRENT**
 
-- Verified: 2026-08-01
-- Verified against: `0f537a8fa0b80b17d100d38c0696f9a07d8e4ba6`
+- Verified: 2026-08-29
+- Verified against: `a23588c8696989cba0e0283454cfd175a9ab1e03`
 - Scope: honest-backtest's bounded projection of the shared Trading Portfolio map
 - Evidence: [machine projection](trading-portfolio-roadmap.yaml) and
   [validation bridge](validation-bridge-contract.md)
@@ -12,8 +12,10 @@ Status: **CURRENT**
 - Next gate: update and validate both projections in a coordinated review.
 
 The canonical portfolio map is owned by `trading-bot-v2`. This repository keeps
-only the validator module projection needed to check the boundary. It does not
-copy producer code, private candidates, runtime state, or operational authority.
+only a pinned validator-module projection needed to check the boundary. It does
+not copy producer code, private candidates, runtime state, or operational
+authority. The `krivonosoff161` profile may integrate a sanitized manifest only
+after the canonical owner has merged and published it.
 
 | Field | Verified value |
 |---|---|

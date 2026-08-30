@@ -1,9 +1,10 @@
 # Strategy Lab Storage
 
-Portfolio-level documentation and storage authority is defined in the
-[Documentation Contract](https://github.com/krivonosoff161/krivonosoff161/blob/main/docs/documentation-contract.md).
-This page narrows that contract for validation and Strategy Lab handoff
-artifacts.
+The canonical producer repository owns Trading Portfolio documentation and
+lifecycle claims; this repository owns only its validation-module documentation
+and bounded local storage rules. This page narrows that boundary for validation
+and Strategy Lab handoff artifacts; it does not grant operational or portfolio
+authority.
 
 ## Rule
 
