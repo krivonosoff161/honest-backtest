@@ -2,8 +2,8 @@
 
 Status: **CURRENT**
 
-- Verified: 2026-08-29
-- Verified against: `9188dadc418de36b73c1c4577763b6f0ad3b5e2f`
+- Verified: 2026-08-30
+- Verified against: `a392333caf0d74d39fbb502b3aef98a0e51b5b9d`
 - Scope: honest-backtest's bounded projection of the shared Trading Portfolio map
 - Evidence: [machine projection](trading-portfolio-roadmap.yaml) and
   [validation bridge](validation-bridge-contract.md)
@@ -44,3 +44,6 @@ content hash reviewed for this alignment. The digest is calculated over
 canonical UTF-8 text with LF line endings, so a Windows CRLF checkout has the
 same identity while any semantic content change remains detectable. A hash
 match proves document identity, not operational readiness or statistical quality.
+It also records a content-addressed implementation snapshot: this keeps the
+review binding valid after a GitHub squash merge changes the commit object, but
+still rejects any source-tree drift from the reviewed implementation.

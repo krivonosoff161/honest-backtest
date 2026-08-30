@@ -11,6 +11,7 @@ from scripts.check_portfolio_docs import EXPECTED_GOVERNANCE, canonical_text_sha
 SYNTHETIC_REPOSITORY_SHA = "1" * 40
 SYNTHETIC_UPSTREAM_SHA = "2" * 40
 SYNTHETIC_UPSTREAM_HASH = "3" * 64
+SYNTHETIC_IMPLEMENTATION_HASH = "4" * 64
 
 
 def _fixture_root(tmp_path: Path) -> Path:
@@ -46,6 +47,7 @@ def _fixture_root(tmp_path: Path) -> Path:
         "verified_date": "2026-08-29",
         **EXPECTED_GOVERNANCE,
         "verified_against": SYNTHETIC_REPOSITORY_SHA,
+        "implementation_snapshot_sha256": SYNTHETIC_IMPLEMENTATION_HASH,
         "upstream": {
             "repository": "krivonosoff161/trading-bot-v2",
             "schema": "TradingPortfolioRoadmap.v1",
@@ -144,7 +146,48 @@ def test_documentation_baseline_rejects_unreviewed_implementation_changes(
         return None
 
     monkeypatch.setattr(docs_guard, "_git_output", fake_git_output)
+    monkeypatch.setattr(docs_guard, "_implementation_snapshot_sha256", lambda _root: "f" * 64)
     assert "documentation baseline has unreviewed implementation changes" in validate(root)
+
+
+def test_projection_accepts_identical_squash_tree_without_baseline_ancestry(
+    tmp_path: Path, monkeypatch
+) -> None:
+    root = _fixture_root(tmp_path)
+
+    def fake_git_output(path: Path, *args: str) -> str | None:
+        if args == ("rev-parse", "--is-inside-work-tree"):
+            return "true"
+        if args[:3] == ("rev-parse", "--verify", f"{SYNTHETIC_REPOSITORY_SHA}^{{commit}}"):
+            return None
+        return None
+
+    monkeypatch.setattr(docs_guard, "_git_output", fake_git_output)
+    monkeypatch.setattr(
+        docs_guard,
+        "_implementation_snapshot_sha256",
+        lambda _root: SYNTHETIC_IMPLEMENTATION_HASH,
+    )
+    assert validate(root) == []
+
+
+def test_projection_rejects_nonancestor_baseline_when_snapshot_drifts(
+    tmp_path: Path, monkeypatch
+) -> None:
+    root = _fixture_root(tmp_path)
+
+    def fake_git_output(path: Path, *args: str) -> str | None:
+        if args == ("rev-parse", "--is-inside-work-tree"):
+            return "true"
+        if args[:3] == ("rev-parse", "--verify", f"{SYNTHETIC_REPOSITORY_SHA}^{{commit}}"):
+            return None
+        return None
+
+    monkeypatch.setattr(docs_guard, "_git_output", fake_git_output)
+    monkeypatch.setattr(docs_guard, "_implementation_snapshot_sha256", lambda _root: "f" * 64)
+    failures = validate(root)
+    assert "projection implementation snapshot does not match checkout" in failures
+    assert "documentation baseline has unreviewed implementation changes" in failures
 
 
 def test_private_pointer_is_rejected_without_echoing_value(tmp_path: Path) -> None:

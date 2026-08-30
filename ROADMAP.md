@@ -2,8 +2,8 @@
 
 Status: **CURRENT**
 
-- Verified: 2026-08-29
-- Verified against: `9188dadc418de36b73c1c4577763b6f0ad3b5e2f`
+- Verified: 2026-08-30
+- Verified against: `a392333caf0d74d39fbb502b3aef98a0e51b5b9d`
 - Scope: completed, current, next, and later evidence gates
 - Evidence: repository source, tests, and `docs/trading-portfolio-roadmap.yaml`
 - Residual risks: priorities can change when producer contracts or statistical evidence change.
@@ -13,7 +13,7 @@ Status: **CURRENT**
 
 - Stable seven-layer deterministic validation toolkit and named overfitting
   statistics.
-- Nine synthetic worked examples and 75 test functions on the review tree,
+- Nine synthetic worked examples and 77 test functions on the review tree,
   including the documentation contract tests.
 - Public-safe validation bridge with paper-only positive ceiling.
 - Experimental Strategy Lab inventory, registry, queue, advisory budget, and
